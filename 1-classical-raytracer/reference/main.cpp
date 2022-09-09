@@ -33,7 +33,7 @@ int main()
 
   Sampler sampler(12);
 
-  glm::vec3 sun_direction = glm::normalize(glm::vec3(1.0f, 1.0f, 0.0f));
+  glm::vec3 sun_direction = glm::normalize(glm::vec3(1.0f, 1.0f, 1.0f));
 
 #pragma omp parallel for collapse(2)
   for (int j = 0; j < height; ++j) {
