@@ -16,17 +16,21 @@ int main()
   Camera camera(glm::vec3(0, 0, 3), glm::vec3(0, 0, -1));
 
   const auto sphere = std::make_shared<Sphere>(glm::vec3(0), 1.0f);
+  const auto floor =
+      std::make_shared<Sphere>(glm::vec3(0, -10001, 0), 10000.0f);
   const auto material = std::make_shared<Material>(glm::vec3(0.8f));
 
   std::vector<std::shared_ptr<Primitive>> primitives;
   primitives.push_back(std::make_shared<Primitive>(sphere, material));
+  primitives.push_back(std::make_shared<Primitive>(floor, material));
 
   LinearIntersector intersector(primitives);
 
   for (int j = 0; j < height; ++j) {
     for (int i = 0; i < width; ++i) {
-      const glm::vec2 ndc =
+      glm::vec2 ndc =
           glm::vec2((2.0f * i - width) / height, (2.0f * j - height) / height);
+      ndc.y *= -1.0f;
       const Ray ray = camera.sampleRay(ndc);
 
       IntersectInfo info;
