@@ -5,7 +5,7 @@
 struct Ray {
   glm::vec3 origin;     // ray origin
   glm::vec3 direction;  // ray direction
-  float tmin = 0.001f;  // minimum hit distance
+  float tmin = 0.0f;    // minimum hit distance
   mutable float tmax = 1e9f;
   ;  // maximum hit distance
 

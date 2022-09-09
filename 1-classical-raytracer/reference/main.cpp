@@ -8,6 +8,8 @@
 #include "primitive.h"
 #include "sampler.h"
 
+#define RAY_EPS 0.001f
+
 int main()
 {
   const int width = 512;
@@ -54,7 +56,7 @@ int main()
           const glm::vec3 wh = glm::normalize(wo + wi);
 
           // trace shadow ray
-          Ray shadow_ray(info.position, wi);
+          Ray shadow_ray(info.position + RAY_EPS * info.normal, wi);
           float visibility = 1.0f;
           IntersectInfo shadow_info;
           if (intersector.intersect(shadow_ray, shadow_info)) {
