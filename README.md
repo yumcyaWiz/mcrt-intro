@@ -34,3 +34,9 @@ each directory has reference implementation under `reference/`.
 |`8-mis/`|implement multiple importance sampling(MIS)|
 |`9-bvh/`|implement bounding volume hierarchy(BVH) and render some obj model|
 |`10-sponza/`|implement material, texture loading and render sponza model|
+
+## Gallery
+
+### 1-classical-raytracer
+
+![](img/1-classical-raytracer.png)
