@@ -15,7 +15,8 @@ int main()
     }
   }
 
-  write_ppm("output.ppm", width, height, image.getConstPtr());
+  // write_ppm("output.ppm", width, height, image.getConstPtr());
+  write_png("output.png", width, height, image.getConstPtr());
 
   return 0;
 }

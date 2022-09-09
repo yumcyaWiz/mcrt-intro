@@ -11,4 +11,5 @@ target_include_directories(reference PUBLIC "reference/")
 target_link_libraries(reference PUBLIC
     spdlog::spdlog
     glm
+    stb_image_write
 )
