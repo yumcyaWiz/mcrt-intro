@@ -24,6 +24,8 @@ class Image
 
   ~Image() { delete[] m_pixels; }
 
+  const float* getConstPtr() const { return m_pixels; }
+
   glm::vec3 getPixel(int i, int j) const
   {
     const int idx = 3 * i + 3 * m_width * j;
