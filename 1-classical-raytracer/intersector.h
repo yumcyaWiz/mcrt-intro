@@ -24,14 +24,7 @@ class LinearIntersector : public Intersector
 
   bool intersect(const Ray& ray, IntersectInfo& info) const override
   {
-    bool hit = false;
-    for (const auto& primitive : m_primitives) {
-      if (primitive->intersect(ray, info)) {
-        ray.tmax = info.t;
-        hit = true;
-      }
-    }
-    return hit;
+    // TODO: implement this
   }
 
  private:
