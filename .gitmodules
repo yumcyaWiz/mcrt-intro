@@ -7,3 +7,6 @@
 [submodule "externals/glm"]
 	path = externals/glm
 	url = git@github.com:g-truc/glm.git
+[submodule "externals/spdlog"]
+	path = externals/spdlog
+	url = git@github.com:gabime/spdlog.git
