@@ -1,3 +1,6 @@
 [submodule "externals/stb"]
 	path = externals/stb
 	url = git@github.com:nothings/stb.git
+[submodule "externals/tinyobjloader"]
+	path = externals/tinyobjloader
+	url = git@github.com:tinyobjloader/tinyobjloader.git
