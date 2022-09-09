@@ -6,11 +6,13 @@
 #include "intersector.h"
 #include "io.h"
 #include "primitive.h"
+#include "sampler.h"
 
 int main()
 {
   const int width = 512;
   const int height = 512;
+  const int n_samples = 100;
 
   Image image(width, height);
   Camera camera(glm::vec3(0, 0, 3), glm::vec3(0, 0, -1));
@@ -26,21 +28,27 @@ int main()
 
   LinearIntersector intersector(primitives);
 
+  Sampler sampler(12);
+
   for (int j = 0; j < height; ++j) {
     for (int i = 0; i < width; ++i) {
-      glm::vec2 ndc =
-          glm::vec2((2.0f * i - width) / height, (2.0f * j - height) / height);
-      ndc.y *= -1.0f;
-      const Ray ray = camera.sampleRay(ndc);
+      for (int k = 0; k < n_samples; ++k) {
+        glm::vec2 ndc =
+            glm::vec2((2.0f * (i + sampler.next_1d()) - width) / height,
+                      (2.0f * (j + sampler.next_1d()) - height) / height);
+        ndc.y *= -1.0f;
+        const Ray ray = camera.sampleRay(ndc);
 
-      IntersectInfo info;
-      if (intersector.intersect(ray, info)) {
-        image.setPixel(i, j, 0.5f * (info.normal + 1.0f));
-      } else {
-        image.setPixel(i, j, glm::vec3(0.0f));
+        IntersectInfo info;
+        if (intersector.intersect(ray, info)) {
+          image.addPixel(i, j, 0.5f * (info.normal + 1.0f));
+        } else {
+          image.addPixel(i, j, glm::vec3(0.0f));
+        }
       }
     }
   }
+  image.divide(n_samples);
 
   image.post_process();
   write_png("output.png", width, height, image.getConstPtr());
