@@ -5,8 +5,9 @@
 struct Ray {
   glm::vec3 origin;
   glm::vec3 direction;
-  float tmin;  // minimum hit distance
-  float tmax;  // maximum hit distance
+  float tmin = 0.001f;  // minimum hit distance
+  float tmax = 1e9f;
+  ;  // maximum hit distance
 
   // return position on the ray with distance t
   glm::vec3 operator()(float t) const { return origin + t * direction; }
