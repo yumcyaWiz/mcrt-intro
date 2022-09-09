@@ -7,6 +7,9 @@ struct Ray {
   glm::vec3 direction;
   float tmin;  // minimum hit distance
   float tmax;  // maximum hit distance
+
+  // return position on the ray with distance t
+  glm::vec3 operator()(float t) const { return origin + t * direction; }
 };
 
 struct IntersectInfo {
