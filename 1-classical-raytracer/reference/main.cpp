@@ -20,15 +20,18 @@ int main()
   const auto sphere = std::make_shared<Sphere>(glm::vec3(0), 1.0f);
   const auto floor =
       std::make_shared<Sphere>(glm::vec3(0, -10001, 0), 10000.0f);
-  const auto material = std::make_shared<Material>(glm::vec3(0.8f));
+  const auto white = std::make_shared<Material>(glm::vec3(0.8f));
+  const auto green = std::make_shared<Material>(glm::vec3(0.2f, 0.8f, 0.2f));
 
   std::vector<std::shared_ptr<Primitive>> primitives;
-  primitives.push_back(std::make_shared<Primitive>(sphere, material));
-  primitives.push_back(std::make_shared<Primitive>(floor, material));
+  primitives.push_back(std::make_shared<Primitive>(sphere, green));
+  primitives.push_back(std::make_shared<Primitive>(floor, white));
 
   LinearIntersector intersector(primitives);
 
   Sampler sampler(12);
+
+  glm::vec3 sun_direction = glm::normalize(glm::vec3(1.0f, 1.0f, 0.0f));
 
 #pragma omp parallel for collapse(2)
   for (int j = 0; j < height; ++j) {
@@ -38,12 +41,19 @@ int main()
             glm::vec2((2.0f * (i + sampler.next_1d()) - width) / height,
                       (2.0f * (j + sampler.next_1d()) - height) / height);
         ndc.y *= -1.0f;
+
+        // sample ray from camera
         const Ray ray = camera.sampleRay(ndc);
 
         IntersectInfo info;
         if (intersector.intersect(ray, info)) {
-          image.addPixel(i, j, 0.5f * (info.normal + 1.0f));
+          const glm::vec3 wi = sun_direction;
+          const glm::vec3 color = info.primitive->material->kd *
+                                  glm::max(glm::dot(wi, info.normal), 0.0f);
+
+          image.addPixel(i, j, color);
         } else {
+          // ray doesn't hit anything
           image.addPixel(i, j, glm::vec3(0.0f));
         }
       }
