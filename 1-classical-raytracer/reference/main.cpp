@@ -30,6 +30,7 @@ int main()
 
   Sampler sampler(12);
 
+#pragma omp parallel for collapse(2)
   for (int j = 0; j < height; ++j) {
     for (int i = 0; i < width; ++i) {
       for (int k = 0; k < n_samples; ++k) {

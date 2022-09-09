@@ -12,4 +12,5 @@ target_link_libraries(reference PUBLIC
     spdlog::spdlog
     glm
     stb_image_write
+    OpenMP::OpenMP_CXX
 )
