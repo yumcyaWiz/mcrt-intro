@@ -15,7 +15,5 @@ find_package(OpenMP REQUIRED)
 # externals
 add_subdirectory("externals/")
 
-# 1-classical-raytracer
-add_executable(1-classical-raytracer "1-classical-raytracer/main.cpp")
-target_include_directories(1-classical-raytracer PUBLIC "shared")
-target_link_libraries(1-classical-raytracer PUBLIC OpenMP::OpenMP_CXX)
+# apps
+add_subdirectory("1-classical-raytracer/")
