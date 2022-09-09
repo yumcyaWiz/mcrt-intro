@@ -30,7 +30,12 @@ struct IntersectInfo {
 };
 
 struct Material {
-  glm::vec3 kd;  // diffuse color
+  glm::vec3 kd;     // diffuse color
+  glm::vec3 ks;     // specular color
+  float roughness;  // specular roughness
 
-  Material(const glm::vec3& kd_) : kd(kd_) {}
+  Material(const glm::vec3& kd_, const glm::vec3& ks_, float roughness_)
+      : kd(kd_), ks(ks_), roughness(roughness_)
+  {
+  }
 };

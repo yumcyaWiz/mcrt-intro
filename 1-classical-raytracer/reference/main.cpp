@@ -20,8 +20,10 @@ int main()
   const auto sphere = std::make_shared<Sphere>(glm::vec3(0), 1.0f);
   const auto floor =
       std::make_shared<Sphere>(glm::vec3(0, -10001, 0), 10000.0f);
-  const auto white = std::make_shared<Material>(glm::vec3(0.8f));
-  const auto green = std::make_shared<Material>(glm::vec3(0.2f, 0.8f, 0.2f));
+  const auto white =
+      std::make_shared<Material>(glm::vec3(0.8f), glm::vec3(0.0f), 1.0f);
+  const auto green = std::make_shared<Material>(glm::vec3(0.2f, 0.8f, 0.2f),
+                                                glm::vec3(0.8f), 0.01f);
 
   std::vector<std::shared_ptr<Primitive>> primitives;
   primitives.push_back(std::make_shared<Primitive>(sphere, green));
@@ -48,6 +50,8 @@ int main()
         IntersectInfo info;
         if (intersector.intersect(ray, info)) {
           const glm::vec3 wi = sun_direction;
+          const glm::vec3 wo = -ray.direction;
+          const glm::vec3 wh = glm::normalize(wo + wi);
 
           // trace shadow ray
           Ray shadow_ray(info.position, wi);
@@ -57,8 +61,13 @@ int main()
             visibility = 0.0f;
           }
 
-          const glm::vec3 color = visibility * info.primitive->material->kd *
-                                  glm::max(glm::dot(wi, info.normal), 0.0f);
+          const glm::vec3 color =
+              visibility *
+              (info.primitive->material->kd *
+                   glm::max(glm::dot(wi, info.normal), 0.0f) +
+               info.primitive->material->ks *
+                   glm::pow(glm::max(glm::dot(wh, info.normal), 0.0f),
+                            1.0f / info.primitive->material->roughness));
 
           image.addPixel(i, j, color);
         } else {
