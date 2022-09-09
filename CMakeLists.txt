@@ -12,6 +12,9 @@ endif()
 # OpenMP
 find_package(OpenMP REQUIRED)
 
+# externals
+add_subdirectory("externals/")
+
 # 1-classical-raytracer
 add_executable(1-classical-raytracer "1-classical-raytracer/main.cpp")
 target_include_directories(1-classical-raytracer PUBLIC "shared")
