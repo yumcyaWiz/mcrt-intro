@@ -9,6 +9,12 @@ struct Ray {
   mutable float tmax = 1e9f;
   ;  // maximum hit distance
 
+  Ray() {}
+  Ray(const glm::vec3& origin_, const glm::vec3& direction_)
+      : origin(origin_), direction(direction_)
+  {
+  }
+
   // return position on the ray with distance t
   glm::vec3 operator()(float t) const { return origin + t * direction; }
 };

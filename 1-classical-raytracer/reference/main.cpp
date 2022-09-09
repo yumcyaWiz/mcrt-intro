@@ -48,7 +48,16 @@ int main()
         IntersectInfo info;
         if (intersector.intersect(ray, info)) {
           const glm::vec3 wi = sun_direction;
-          const glm::vec3 color = info.primitive->material->kd *
+
+          // trace shadow ray
+          Ray shadow_ray(info.position, wi);
+          float visibility = 1.0f;
+          IntersectInfo shadow_info;
+          if (intersector.intersect(shadow_ray, shadow_info)) {
+            visibility = 0.0f;
+          }
+
+          const glm::vec3 color = visibility * info.primitive->material->kd *
                                   glm::max(glm::dot(wi, info.normal), 0.0f);
 
           image.addPixel(i, j, color);
