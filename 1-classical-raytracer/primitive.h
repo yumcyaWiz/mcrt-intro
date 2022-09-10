@@ -18,6 +18,11 @@ struct Primitive {
   // find ray intersection
   bool intersect(const Ray& ray, IntersectInfo& info) const
   {
-    // TODO: implement this
+    if (shape->intersect(ray, info)) {
+      info.primitive = this;
+      return true;
+    }
+
+    return false;
   }
 };
