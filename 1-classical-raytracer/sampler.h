@@ -12,7 +12,7 @@ typedef struct {
   uint64_t inc;
 } pcg32_random_t;
 
-uint32_t pcg32_random_r(pcg32_random_t* rng)
+inline uint32_t pcg32_random_r(pcg32_random_t* rng)
 {
   uint64_t oldstate = rng->state;
   // Advance internal state
