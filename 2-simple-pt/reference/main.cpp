@@ -1,5 +1,6 @@
 #include <memory>
 
+#include "bxdf.h"
 #include "camera.h"
 #include "core.h"
 #include "image.h"
