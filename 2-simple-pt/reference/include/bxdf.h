@@ -27,6 +27,7 @@ class BxDF
 class Lambert : public BxDF
 {
  public:
+  Lambert() {}
   Lambert(const glm::vec3& albedo) : m_albedo(albedo) {}
 
   glm::vec3 sampleDirection(const glm::vec2& u, const glm::vec3& wo,
@@ -45,6 +46,7 @@ class Lambert : public BxDF
 class IdealSpecularReflection : public BxDF
 {
  public:
+  IdealSpecularReflection() {}
   IdealSpecularReflection(const glm::vec3& albedo) : m_albedo(albedo) {}
 
   glm::vec3 sampleDirection(const glm::vec2& u, const glm::vec3& wo,
