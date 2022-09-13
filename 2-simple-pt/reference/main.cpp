@@ -4,6 +4,7 @@
 #include "camera.h"
 #include "core.h"
 #include "image.h"
+#include "integrator.h"
 #include "intersector.h"
 #include "io.h"
 #include "primitive.h"
