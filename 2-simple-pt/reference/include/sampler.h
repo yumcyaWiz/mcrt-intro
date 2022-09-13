@@ -4,6 +4,7 @@
 #include <iterator>
 
 #include "glm/glm.hpp"
+#include "core.h"
 
 // *Really* minimal PCG32 code / (c) 2014 M.E. O'Neill / pcg-random.org
 // Licensed under Apache License 2.0 (NO WARRANTY, etc. see website)
@@ -44,3 +45,10 @@ class Sampler
  private:
   pcg32_random_t state;
 };
+
+inline glm::vec3 sample_cosine_weighted_hemisphere(const glm::vec2& u) {
+  const float theta =
+      0.5f * glm::acos(glm::clamp(1.0f - 2.0f * u[0], -1.0f, 1.0f));
+  const float phi = 2.0f * M_PI * u[1];
+  return spherical_to_cartesian(phi, theta);
+}
