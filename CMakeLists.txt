@@ -15,5 +15,8 @@ find_package(OpenMP REQUIRED)
 # externals
 add_subdirectory("externals/")
 
-# apps
+# 1-classical-raytracer
 add_subdirectory("1-classical-raytracer/")
+
+# 2-simple-pt
+add_subdirectory("2-simple-pt")
