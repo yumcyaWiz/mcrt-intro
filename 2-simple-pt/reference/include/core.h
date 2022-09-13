@@ -66,7 +66,7 @@ inline void orthonormal_basis(const glm::vec3& normal, glm::vec3& tangent,
 inline glm::vec3 world_to_local(const glm::vec3& v, const glm::vec3& t,
                                 const glm::vec3& n, const glm::vec3& b)
 {
-  return glm::vec3(glm::dot(v, t), glm::dot(v, n), glm::dot(b, n));
+  return glm::vec3(glm::dot(v, t), glm::dot(v, n), glm::dot(v, b));
 }
 
 inline glm::vec3 local_to_world(const glm::vec3& v, const glm::vec3& t,
