@@ -39,3 +39,10 @@ struct Material {
   {
   }
 };
+
+inline glm::vec3 spherical_to_cartesian(float phi, float theta)
+{
+  const float sin_theta = glm::sin(theta);
+  return glm::vec3(glm::cos(phi) * sin_theta, glm::cos(theta),
+                   glm::sin(phi) * sin_theta);
+}
