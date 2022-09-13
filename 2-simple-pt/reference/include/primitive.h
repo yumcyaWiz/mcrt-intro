@@ -26,6 +26,7 @@ struct Primitive {
     return false;
   }
 
+  // has emission or not
   bool has_emission() const
   {
     return material->ke.x > 0.0f || material->ke.y > 0.0f ||
