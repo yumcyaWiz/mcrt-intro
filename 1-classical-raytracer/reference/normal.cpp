@@ -1,12 +1,8 @@
-#include <memory>
-
 #include "camera.h"
 #include "core.h"
 #include "image.h"
-#include "intersector.h"
 #include "io.h"
-#include "primitive.h"
-#include "sampler.h"
+#include "shape.h"
 
 int main()
 {

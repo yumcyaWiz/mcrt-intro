@@ -1,3 +1,12 @@
+# mandelbrot
+add_executable(mandelbrot "mandelbrot.cpp")
+target_include_directories(mandelbrot PUBLIC "include/")
+target_link_libraries(mandelbrot PUBLIC
+    spdlog::spdlog
+    glm
+    stb_image_write
+)
+
 # normal
 add_executable(normal "normal.cpp")
 target_include_directories(normal PUBLIC "include/")
