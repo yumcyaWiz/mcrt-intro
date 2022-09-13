@@ -59,6 +59,20 @@ inline void orthonormal_basis(const glm::vec3& normal, glm::vec3& tangent,
   const float a = -1.0f / (sign + normal.z);
   const float b = normal.x * normal.y * a;
   tangent = glm::vec3(1.0f + sign * normal.x * normal.x * a, sign * b,
-                        -sign * normal.x);
+                      -sign * normal.x);
   bitangent = glm::vec3(b, sign + normal.y * normal.y * a, -normal.y);
+}
+
+inline glm::vec3 world_to_local(const glm::vec3& v, const glm::vec3& t,
+                                const glm::vec3& n, const glm::vec3& b)
+{
+  return glm::vec3(glm::dot(v, t), glm::dot(v, n), glm::dot(b, n));
+}
+
+inline glm::vec3 local_to_world(const glm::vec3& v, const glm::vec3& t,
+                                const glm::vec3& n, const glm::vec3& b)
+{
+  return glm::vec3(v.x * t.x + v.y * n.x + v.z * b.x,
+                   v.x * t.y + v.y * n.y + v.z * b.y,
+                   v.x * t.z + v.y * n.z + v.z * b.z);
 }
