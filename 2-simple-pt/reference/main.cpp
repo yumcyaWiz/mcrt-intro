@@ -10,13 +10,11 @@
 #include "primitive.h"
 #include "sampler.h"
 
-#define RAY_EPS 0.001f
-
 int main()
 {
   const int width = 512;
   const int height = 512;
-  const int n_samples = 100;
+  const int n_samples = 1000;
 
   Image image(width, height);
   Camera camera(glm::vec3(0, 0, 3), glm::vec3(0, 0, -1));
@@ -37,6 +35,8 @@ int main()
 
   Sampler sampler(12);
 
+  PathTracing integrator(10);
+
 #pragma omp parallel for collapse(2)
   for (int j = 0; j < height; ++j) {
     for (int i = 0; i < width; ++i) {
@@ -49,12 +49,11 @@ int main()
         // sample ray from camera
         const Ray ray = camera.sampleRay(ndc);
 
-        IntersectInfo info;
-        if (intersector.intersect(ray, info)) {
-        } else {
-          // ray doesn't hit anything
-          image.addPixel(i, j, glm::vec3(0.0f));
-        }
+        // evaluate incoming radiance
+        const glm::vec3 radiance =
+            integrator.integrate(ray, &intersector, sampler);
+
+        image.addPixel(i, j, radiance);
       }
     }
   }

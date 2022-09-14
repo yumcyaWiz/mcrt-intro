@@ -6,7 +6,7 @@
 #include "intersector.h"
 #include "sampler.h"
 
-#define RAY_EPS 0.001f
+#define RAY_EPS 0.01f
 
 class Integrator
 {
@@ -32,40 +32,45 @@ class PathTracing : public Integrator
       // russian roulette
       const float russian_roulette_prob =
           glm::max(throughput.x, glm::max(throughput.y, throughput.z));
-      if (sampler.next_1d() < russian_roulette_prob) { break; }
+      if (sampler.next_1d() > russian_roulette_prob) { break; }
       throughput /= russian_roulette_prob;
 
       IntersectInfo info;
-      if (intersector->intersect(ray, info)) {
-        // Le
-        if (info.primitive->has_emission()) {
-          radiance += throughput * info.primitive->material->ke;
-          break;
-        }
-
-        // compute tangent space basis
-        glm::vec3 tangent, bitangent;
-        orthonormal_basis(info.normal, tangent, bitangent);
-
-        // setup BSDF
-        const std::shared_ptr<BSDF> bsdf =
-            std::make_shared<LambertOnly>(*info.primitive->material);
-
-        // sample direction from BSDF
-        const glm::vec3 wo =
-            world_to_local(-ray.direction, tangent, info.normal, bitangent);
-        glm::vec3 f;
-        float pdf;
-        const glm::vec3 wi =
-            bsdf->sampleDirection(sampler.next_2d(), wo, f, pdf);
-
-        // update throughput
-        throughput *= f * abs_cos_theta(wi) / pdf;
-
-        // update ray
-        ray.origin = info.position + RAY_EPS * info.normal;
-        ray.direction = local_to_world(wi, tangent, info.normal, bitangent);
+      // ray goes to sky
+      if (!intersector->intersect(ray, info)) {
+        // evaluate environment light
+        radiance += throughput * glm::vec3(1.0f);
+        break;
       }
+
+      // ray hits area light
+      if (info.primitive->has_emission()) {
+        // add Le
+        radiance += throughput * info.primitive->material->ke;
+        break;
+      }
+
+      // compute tangent space basis
+      glm::vec3 tangent, bitangent;
+      orthonormal_basis(info.normal, tangent, bitangent);
+
+      // setup BSDF
+      const std::shared_ptr<BSDF> bsdf =
+          std::make_shared<LambertOnly>(*info.primitive->material);
+
+      // sample direction from BSDF
+      const glm::vec3 wo =
+          world_to_local(-ray.direction, tangent, info.normal, bitangent);
+      glm::vec3 f;
+      float pdf;
+      const glm::vec3 wi = bsdf->sampleDirection(sampler.next_2d(), wo, f, pdf);
+
+      // update throughput
+      throughput *= f * abs_cos_theta(wi) / pdf;
+
+      // update ray
+      ray.origin = info.position + RAY_EPS * info.normal;
+      ray.direction = local_to_world(wi, tangent, info.normal, bitangent);
     }
 
     return radiance;
