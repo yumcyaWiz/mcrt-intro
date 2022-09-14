@@ -13,3 +13,6 @@
 [submodule "externals/argparse"]
 	path = externals/argparse
 	url = https://github.com/p-ranav/argparse.git
+[submodule "externals/indicators"]
+	path = externals/indicators
+	url = https://github.com/p-ranav/indicators.git
