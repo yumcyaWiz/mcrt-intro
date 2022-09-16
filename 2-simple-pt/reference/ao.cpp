@@ -14,7 +14,7 @@ int main()
 {
   const int width = 512;
   const int height = 512;
-  const int n_samples = 1000;
+  const int n_samples = 100;
 
   Image image(width, height);
   Camera camera(glm::vec3(0, 0, 3), glm::vec3(0, 0, -1));
@@ -56,14 +56,18 @@ int main()
           // sample direction
           const glm::vec3 wi =
               sample_cosine_weighted_hemisphere(sampler.next_2d());
+          const float pdf = glm::abs(wi.y) / M_PIf;
           const glm::vec3 wi_global =
               local_to_world(wi, tangent, info.normal, bitangent);
+
+          const glm::vec3 f = glm::vec3(1.0f / M_PIf);
+          const float cos = glm::abs(wi.y);
 
           // trace shadow ray
           Ray shadow_ray(info.position + RAY_EPS * info.normal, wi_global);
           IntersectInfo shadow_info;
           if (!intersector.intersect(shadow_ray, shadow_info)) {
-            image.addPixel(i, j, glm::vec3(1.0f));
+            image.addPixel(i, j, f * glm::vec3(1.0f) * cos / pdf);
           } else {
             image.addPixel(i, j, glm::vec3(0.0f));
           }

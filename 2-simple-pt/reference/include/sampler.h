@@ -46,6 +46,15 @@ class Sampler
   pcg32_random_t state;
 };
 
+// uniform hemisphere sampling
+inline glm::vec3 sample_hemisphere(const glm::vec2& u)
+{
+  const float theta = glm::acos(glm::clamp(1.0f - u[0], -1.0f, 1.0f));
+  const float phi = 2.0f * M_PIf * u[1];
+  return spherical_to_cartesian(phi, theta);
+}
+
+// cosine weighted hemisphere sampling
 inline glm::vec3 sample_cosine_weighted_hemisphere(const glm::vec2& u)
 {
   const float theta =
