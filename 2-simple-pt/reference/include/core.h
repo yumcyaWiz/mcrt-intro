@@ -35,9 +35,9 @@ struct Material {
   glm::vec3 ke;     // emission color
   float roughness;  // specular roughness
 
-  Material(const glm::vec3& kd_, const glm::vec3& ks_, const glm::vec3& ke,
+  Material(const glm::vec3& kd_, const glm::vec3& ks_, const glm::vec3& ke_,
            float roughness_)
-      : kd(kd_), ks(ks_), roughness(roughness_)
+      : kd(kd_), ks(ks_), ke(ke_), roughness(roughness_)
   {
   }
 };
