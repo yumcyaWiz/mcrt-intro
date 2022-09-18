@@ -38,3 +38,7 @@ each directory has reference implementation under `reference/`.
 ### 1-classical-raytracer
 
 ![](img/1-classical-raytracer.png)
+
+### 2-simple-pt
+
+![](img/2-simple-pt.png)
