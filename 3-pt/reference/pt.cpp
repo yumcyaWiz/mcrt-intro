@@ -28,11 +28,11 @@ int main()
   const Material green = Material(glm::vec3(0.2f, 0.8f, 0.2f), glm::vec3(0.8f),
                                   glm::vec3(0.0f), 0.01f);
 
-  std::vector<std::shared_ptr<Primitive>> primitives;
-  primitives.push_back(std::make_shared<Primitive>(&sphere, &green));
-  primitives.push_back(std::make_shared<Primitive>(&floor, &white));
+  std::vector<Primitive> primitives;
+  primitives.emplace_back(&sphere, &green);
+  primitives.emplace_back(&floor, &white);
 
-  LinearIntersector intersector(primitives);
+  LinearIntersector intersector(primitives.data(), primitives.size());
 
   Sampler sampler(12);
 

@@ -17,8 +17,8 @@ class Intersector
 class LinearIntersector : public Intersector
 {
  public:
-  LinearIntersector(const std::vector<std::shared_ptr<Primitive>>& primitives)
-      : m_primitives(primitives)
+  LinearIntersector(const Primitive* primitives, uint32_t n_primitives)
+      : m_primitives(primitives), m_n_primitives(n_primitives)
   {
   }
 
@@ -26,8 +26,9 @@ class LinearIntersector : public Intersector
   {
     bool hit = false;
     float ray_tmax = ray.tmax;
-    for (const auto& primitive : m_primitives) {
-      if (primitive->intersect(ray, info)) {
+    for (uint32_t i = 0; i < m_n_primitives; ++i) {
+      const Primitive& primitive = m_primitives[i];
+      if (primitive.intersect(ray, info)) {
         ray.tmax = info.t;
         hit = true;
       }
@@ -37,6 +38,6 @@ class LinearIntersector : public Intersector
   }
 
  private:
-  std::vector<std::shared_ptr<Primitive>>
-      m_primitives;  // array of primitive pointers
+  const Primitive* m_primitives;  // array of primitives
+  uint32_t m_n_primitives;        // number of primitives
 };
