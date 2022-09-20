@@ -48,3 +48,67 @@ class Sphere : public Shape
   glm::vec3 m_center;  // center of sphere
   float m_radius;      // radius of sphere
 };
+
+class Triangle : public Shape
+{
+ public:
+  Triangle(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2,
+           const glm::vec3& n0, const glm::vec3& n1, const glm::vec3& n2,
+           const glm::vec3& t0, const glm::vec3& t1, const glm::vec3& t2)
+      : m_v0(v0),
+        m_v1(v1),
+        m_v2(v2),
+        m_n0(n0),
+        m_n1(n1),
+        m_n2(n2),
+        m_t0(t0),
+        m_t1(t1),
+        m_t2(t2)
+  {
+  }
+
+  bool intersect(const Ray& ray, IntersectInfo& info) const override
+  {
+    const float EPS = 1e-6f;
+
+    const glm::vec3 e0 = m_v1 - m_v0;
+    const glm::vec3 e1 = m_v2 - m_v0;
+    const glm::vec3 h = glm::cross(ray.direction, e1);
+    const float a = glm::dot(e0, h);
+    if (a > -EPS && a < EPS) { return false; }
+
+    const float f = 1.0f / a;
+    const glm::vec3 s = ray.origin - m_v0;
+    const float u = f * glm::dot(s, h);
+    if (u < 0.0f || u > 1.0f) { return false; }
+
+    const glm::vec3 q = glm::cross(s, e0);
+    const float v = f * glm::dot(ray.direction, q);
+    if (v < 0.0f || u + v > 1.0f) { return false; }
+
+    const float t = f * glm::dot(e1, q);
+    if (t < ray.tmin || t > ray.tmax) { return false; }
+
+    info.t = t;
+    info.position = (1.0f - u) * m_v0 + u * m_v1 + v * m_v2;
+    info.normal = (1.0f - u) * m_n0 + u * m_n1 + v * m_n2;
+
+    return true;
+  }
+
+ private:
+  // vertex positions
+  glm::vec3 m_v0;
+  glm::vec3 m_v1;
+  glm::vec3 m_v2;
+
+  // vertex normals
+  glm::vec3 m_n0;
+  glm::vec3 m_n1;
+  glm::vec3 m_n2;
+
+  // vertex texcoords
+  glm::vec2 m_t0;
+  glm::vec2 m_t1;
+  glm::vec2 m_t2;
+};
