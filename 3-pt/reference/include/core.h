@@ -1,6 +1,7 @@
 #pragma once
 
 #include "glm/glm.hpp"
+#include "texture.h"
 
 struct Ray {
   glm::vec3 origin;     // ray origin
@@ -30,17 +31,18 @@ struct IntersectInfo {
 };
 
 struct Material {
-  glm::vec3 kd;     // diffuse color
-  glm::vec3 ks;     // specular color
-  glm::vec3 ke;     // emission color
-  float roughness;  // specular roughness
+  glm::vec3 kd = glm::vec3(0.0f);   // diffuse color
+  const Texture* kd_tex = nullptr;  // diffuse texture
+
+  glm::vec3 ks = glm::vec3(0.0f);   // specular color
+  const Texture* ks_tex = nullptr;  // specular texture
+
+  glm::vec3 ke = glm::vec3(0.0f);   // emission color
+  const Texture* ke_tex = nullptr;  // emission texture
+
+  float roughness = 1.0f;  // specular roughness
 
   Material() {}
-  Material(const glm::vec3& kd_, const glm::vec3& ks_, const glm::vec3& ke_,
-           float roughness_)
-      : kd(kd_), ks(ks_), ke(ke_), roughness(roughness_)
-  {
-  }
 };
 
 // convert spherical coordinate to cartesian coordinate

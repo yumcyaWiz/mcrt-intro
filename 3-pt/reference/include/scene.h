@@ -7,6 +7,7 @@
 #include "primitive.h"
 #include "shape.h"
 #include "spdlog/spdlog.h"
+#include "texture.h"
 #include "tiny_obj_loader.h"
 
 struct Scene {
@@ -31,6 +32,23 @@ struct Scene {
     const auto& attrib = reader.GetAttrib();
     const auto& shapes = reader.GetShapes();
     const auto& materials = reader.GetMaterials();
+
+    // load textures
+    const auto loadTexture = [&](const std::string& texture_filepath) {
+      if (m_unique_textures.count(texture_filepath) == 0) {
+        const int texture_id = m_textures.size();
+        m_textures.emplace_back(texture_filepath);
+        m_unique_textures[texture_filepath] = texture_id;
+      }
+    };
+    for (const auto& m : materials) {
+      // diffuse texture
+      if (!m.diffuse_texname.empty()) { loadTexture(m.diffuse_texname); }
+      // specular texture
+      if (!m.specular_texname.empty()) { loadTexture(m.specular_texname); }
+      // emission texture
+      if (!m.emissive_texname.empty()) { loadTexture(m.emissive_texname); }
+    }
 
     // load materials
     for (const auto& m : materials) {
@@ -124,17 +142,39 @@ struct Scene {
 
     spdlog::info("[Scene] number of primitives: {}", m_primitives.size());
     spdlog::info("[Scene] number of materials: {}", m_materials.size());
+    spdlog::info("[Scene] number of textures: {}", m_textures.size());
   }
 
-  static Material loadMaterial(const tinyobj::material_t& m)
+  Material loadMaterial(const tinyobj::material_t& m) const
   {
-    const glm::vec3 kd = glm::vec3(m.diffuse[0], m.diffuse[1], m.diffuse[2]);
-    const glm::vec3 ks = glm::vec3(m.specular[0], m.specular[1], m.specular[2]);
-    const glm::vec3 ke = glm::vec3(m.emission[0], m.emission[1], m.emission[2]);
-    return Material(kd, ks, ke, 1.0f);
+    Material mat;
+
+    mat.kd = glm::vec3(m.diffuse[0], m.diffuse[1], m.diffuse[2]);
+    mat.ks = glm::vec3(m.specular[0], m.specular[1], m.specular[2]);
+    mat.ke = glm::vec3(m.emission[0], m.emission[1], m.emission[2]);
+
+    if (!m.diffuse_texname.empty()) {
+      const int texture_id = m_unique_textures.at(m.diffuse_texname);
+      mat.kd_tex = &m_textures[texture_id];
+    }
+
+    if (!m.specular_texname.empty()) {
+      const int texture_id = m_unique_textures.at(m.specular_texname);
+      mat.ks_tex = &m_textures[texture_id];
+    }
+
+    if (!m.emissive_texname.empty()) {
+      const int texture_id = m_unique_textures.at(m.emissive_texname);
+      mat.ke_tex = &m_textures[texture_id];
+    }
+
+    return mat;
   }
 
   std::vector<Triangle> m_triangles;
+  // key: texture filepath, value: texture id
+  std::map<std::string, int> m_unique_textures;
+  std::vector<Texture> m_textures;
   std::vector<Material> m_materials;
   std::vector<int> m_material_ids;
   std::vector<Primitive> m_primitives;
