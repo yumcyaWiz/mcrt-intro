@@ -110,11 +110,16 @@ struct Scene {
             tri_normals[1], tri_normals[2], tri_texcoords[0], tri_texcoords[1],
             tri_texcoords[2]);
 
-        // load primitives
+        // load material id
         const int material_id = shapes[s].mesh.material_ids[f];
-        m_primitives.emplace_back(&m_triangles[triangle_id],
-                                  &m_materials[material_id]);
+        m_material_ids.push_back(material_id);
       }
+    }
+
+    // load primitives
+    for (uint32_t f = 0; f < m_primitives.size(); ++f) {
+      const int material_id = m_material_ids[f];
+      m_primitives.emplace_back(&m_triangles[f], &m_materials[material_id]);
     }
 
     spdlog::info("[Scene] number of primitives: {}", m_primitives.size());
@@ -131,5 +136,6 @@ struct Scene {
 
   std::vector<Triangle> m_triangles;
   std::vector<Material> m_materials;
+  std::vector<int> m_material_ids;
   std::vector<Primitive> m_primitives;
 };
