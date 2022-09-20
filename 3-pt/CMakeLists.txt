@@ -8,6 +8,7 @@ target_link_libraries(3-pt-main PUBLIC
     stb_image
     stb_image_write
     OpenMP::OpenMP_CXX
+    tinyobjloader
 )
 
 # reference

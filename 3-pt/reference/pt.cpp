@@ -9,6 +9,7 @@
 #include "io.h"
 #include "primitive.h"
 #include "sampler.h"
+#include "scene.h"
 
 int main()
 {
