@@ -123,8 +123,10 @@ struct Scene {
 
   static Material loadMaterial(const tinyobj::material_t& m)
   {
-    // TODO: implement this
-    return Material();
+    const glm::vec3 kd = glm::vec3(m.diffuse[0], m.diffuse[1], m.diffuse[2]);
+    const glm::vec3 ks = glm::vec3(m.specular[0], m.specular[1], m.specular[2]);
+    const glm::vec3 ke = glm::vec3(m.emission[0], m.emission[1], m.emission[2]);
+    return Material(kd, ks, ke, 1.0f);
   }
 
   std::vector<Triangle> m_triangles;
