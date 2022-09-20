@@ -19,4 +19,7 @@ add_subdirectory("externals/")
 add_subdirectory("1-classical-raytracer/")
 
 # 2-simple-pt
-add_subdirectory("2-simple-pt")
+add_subdirectory("2-simple-pt/")
+
+# 3-pt
+add_subdirectory("3-pt/")
