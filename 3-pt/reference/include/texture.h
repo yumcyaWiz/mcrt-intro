@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <filesystem>
+#include <stdexcept>
 
 #include "glm/glm.hpp"
 #include "spdlog/spdlog.h"
@@ -11,13 +12,15 @@ class Texture
  public:
   Texture(const std::filesystem::path& filepath)
   {
+    spdlog::info("[Texture] loading {}", filepath.generic_string());
+
     // load image with stb image
     int c;
     unsigned char* img =
-        stbi_load(filepath.c_str(), &m_width, &m_height, &c, 4);
+        stbi_load(filepath.c_str(), &m_width, &m_height, &c, STBI_rgb_alpha);
     if (!img) {
-      spdlog::info("failed to load {}", filepath.c_str());
-      return;
+      spdlog::error("{}", stbi_failure_reason());
+      throw std::runtime_error("failed to load " + filepath.generic_string());
     }
 
     // convert from u8 to f32
