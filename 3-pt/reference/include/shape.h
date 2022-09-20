@@ -54,7 +54,7 @@ class Triangle : public Shape
  public:
   Triangle(const glm::vec3& v0, const glm::vec3& v1, const glm::vec3& v2,
            const glm::vec3& n0, const glm::vec3& n1, const glm::vec3& n2,
-           const glm::vec3& t0, const glm::vec3& t1, const glm::vec3& t2)
+           const glm::vec2& t0, const glm::vec2& t1, const glm::vec2& t2)
       : m_v0(v0),
         m_v1(v1),
         m_v2(v2),
@@ -67,6 +67,8 @@ class Triangle : public Shape
   {
   }
 
+  // Möller–Trumbore intersection algorithm
+  // https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm?oldformat=true
   bool intersect(const Ray& ray, IntersectInfo& info) const override
   {
     const float EPS = 1e-6f;

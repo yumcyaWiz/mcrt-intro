@@ -21,17 +21,16 @@ int main()
   Image image(width, height);
   Camera camera(glm::vec3(0, 0, 3), glm::vec3(0, 0, -1));
 
-  const auto sphere = std::make_shared<Sphere>(glm::vec3(0), 1.0f);
-  const auto floor =
-      std::make_shared<Sphere>(glm::vec3(0, -10001, 0), 10000.0f);
-  const auto white = std::make_shared<Material>(
-      glm::vec3(0.8f), glm::vec3(0.0f), glm::vec3(0.0f), 1.0f);
-  const auto green = std::make_shared<Material>(
-      glm::vec3(0.2f, 0.8f, 0.2f), glm::vec3(0.8f), glm::vec3(0.0f), 0.01f);
+  const Sphere sphere = Sphere(glm::vec3(0), 1.0f);
+  const Sphere floor = Sphere(glm::vec3(0, -10001, 0), 10000.0f);
+  const Material white =
+      Material(glm::vec3(0.8f), glm::vec3(0.0f), glm::vec3(0.0f), 1.0f);
+  const Material green = Material(glm::vec3(0.2f, 0.8f, 0.2f), glm::vec3(0.8f),
+                                  glm::vec3(0.0f), 0.01f);
 
   std::vector<std::shared_ptr<Primitive>> primitives;
-  primitives.push_back(std::make_shared<Primitive>(sphere, green));
-  primitives.push_back(std::make_shared<Primitive>(floor, white));
+  primitives.push_back(std::make_shared<Primitive>(&sphere, &green));
+  primitives.push_back(std::make_shared<Primitive>(&floor, &white));
 
   LinearIntersector intersector(primitives);
 

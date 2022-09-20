@@ -3,8 +3,9 @@
 #include <stdexcept>
 #include <vector>
 
-#include "core.h"
 #include "glm/glm.hpp"
+#include "primitive.h"
+#include "shape.h"
 #include "spdlog/spdlog.h"
 #include "tiny_obj_loader.h"
 
@@ -18,13 +19,13 @@ struct Scene {
 
     if (!reader.ParseFromFile(filepath, reader_config)) {
       if (!reader.Error().empty()) {
-        spdlog::error("[tinyobjloader]: {}", reader.Error());
+        spdlog::error("[tinyobjloader] {}", reader.Error());
       }
       throw std::runtime_error("failed to load " + filepath.generic_string());
     }
 
     if (!reader.Warning().empty()) {
-      spdlog::warn("[tinyobjloader]: {}", reader.Warning());
+      spdlog::warn("[tinyobjloader] {}", reader.Warning());
     }
 
     const auto& attrib = reader.GetAttrib();
@@ -102,31 +103,22 @@ struct Scene {
           tri_texcoords.push_back(glm::vec2(0, 1));
         }
 
-        // load vertices
-        m_vertices.push_back(tri_vertices[0]);
-        m_vertices.push_back(tri_vertices[1]);
-        m_vertices.push_back(tri_vertices[2]);
+        // load triangles
+        const int triangle_id = m_triangles.size();
+        m_triangles.emplace_back(
+            tri_vertices[0], tri_vertices[1], tri_vertices[2], tri_normals[0],
+            tri_normals[1], tri_normals[2], tri_texcoords[0], tri_texcoords[1],
+            tri_texcoords[2]);
 
-        // load indices
-        const uint32_t n_faces = m_indices.size();
-        m_indices.push_back(
-            glm::uvec3(3 * n_faces + 0, 3 * n_faces + 1, 3 * n_faces + 2));
-
-        // load normals
-        m_normals.push_back(tri_normals[0]);
-        m_normals.push_back(tri_normals[1]);
-        m_normals.push_back(tri_normals[2]);
-
-        // load texcoords
-        m_texcoords.push_back(tri_texcoords[0]);
-        m_texcoords.push_back(tri_texcoords[1]);
-        m_texcoords.push_back(tri_texcoords[2]);
-
-        // load material id
-        const auto material_id = shapes[s].mesh.material_ids[f];
-        m_material_ids.push_back(material_id);
+        // load primitives
+        const int material_id = shapes[s].mesh.material_ids[f];
+        m_primitives.emplace_back(&m_triangles[triangle_id],
+                                  &m_materials[material_id]);
       }
     }
+
+    spdlog::info("[Scene] number of primitives: {}", m_primitives.size());
+    spdlog::info("[Scene] number of materials: {}", m_materials.size());
   }
 
   static Material loadMaterial(const tinyobj::material_t& m)
@@ -135,11 +127,7 @@ struct Scene {
     return Material();
   }
 
-  std::vector<glm::vec3> m_vertices;
-  std::vector<glm::uvec3> m_indices;
-  std::vector<glm::vec3> m_normals;
-  std::vector<glm::vec2> m_texcoords;
-
+  std::vector<Triangle> m_triangles;
   std::vector<Material> m_materials;
-  std::vector<uint32_t> m_material_ids;  // per face material id
+  std::vector<Primitive> m_primitives;
 };

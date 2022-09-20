@@ -6,11 +6,10 @@
 
 // primitive holds pointer of shape and material
 struct Primitive {
-  std::shared_ptr<Shape> shape;
-  std::shared_ptr<Material> material;
+  const Shape* shape;
+  const Material* material;
 
-  Primitive(const std::shared_ptr<Shape>& shape_,
-            const std::shared_ptr<Material>& material_)
+  Primitive(const Shape* shape_, const Material* material_)
       : shape(shape_), material(material_)
   {
   }
