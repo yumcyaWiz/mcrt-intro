@@ -10,6 +10,7 @@
 #include "primitive.h"
 #include "sampler.h"
 #include "scene.h"
+#include "texture.h"
 
 int main()
 {
