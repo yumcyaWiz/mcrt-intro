@@ -117,7 +117,7 @@ struct Scene {
     }
 
     // load primitives
-    for (uint32_t f = 0; f < m_primitives.size(); ++f) {
+    for (uint32_t f = 0; f < m_triangles.size(); ++f) {
       const int material_id = m_material_ids[f];
       m_primitives.emplace_back(&m_triangles[f], &m_materials[material_id]);
     }

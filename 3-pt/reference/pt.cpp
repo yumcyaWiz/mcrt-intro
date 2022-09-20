@@ -19,7 +19,7 @@ int main()
   const int max_depth = 10;
 
   Image image(width, height);
-  Camera camera(glm::vec3(0, 0, 3), glm::vec3(0, 0, -1));
+  Camera camera(glm::vec3(0, 1, 3), glm::vec3(0, 0, -1));
 
   Scene scene;
   scene.loadObj("./CornellBox-Original.obj");
