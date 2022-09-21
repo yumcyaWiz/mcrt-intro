@@ -3,6 +3,7 @@
 
 #include "bxdf.h"
 #include "core.h"
+#include "primitive.h"
 
 class BSDF
 {
@@ -14,12 +15,13 @@ class BSDF
 class LambertOnly : public BSDF
 {
  public:
-  LambertOnly(const Material& material)
+  LambertOnly(const IntersectInfo& info)
   {
+    const Material& material = *info.primitive->material;
+
     glm::vec3 kd = material.kd;
     if (material.kd_tex != nullptr) {
-      // TODO: set texcoord
-      kd = glm::vec3(material.kd_tex->fetch(glm::vec2(0, 0)));
+      kd = glm::vec3(material.kd_tex->fetch(info.texcoord));
     }
 
     m_lambert = Lambert(kd);

@@ -27,6 +27,7 @@ struct IntersectInfo {
   float t;                     // hit distance
   glm::vec3 position;          // hit position
   glm::vec3 normal;            // hit normal
+  glm::vec2 texcoord;          // hit texcoord
   const Primitive* primitive;  // hit primitive pointer
 };
 

@@ -94,6 +94,7 @@ class Triangle : public Shape
     info.t = t;
     info.position = (1.0f - u - v) * m_v0 + u * m_v1 + v * m_v2;
     info.normal = (1.0f - u - v) * m_n0 + u * m_n1 + v * m_n2;
+    info.texcoord = (1.0f - u - v) * m_t0 + u * m_t1 + v * m_t2;
 
     return true;
   }

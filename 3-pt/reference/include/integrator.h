@@ -55,8 +55,7 @@ class PathTracing : public Integrator
       orthonormal_basis(info.normal, tangent, bitangent);
 
       // setup BSDF
-      const std::shared_ptr<BSDF> bsdf =
-          std::make_shared<LambertOnly>(*info.primitive->material);
+      const std::shared_ptr<BSDF> bsdf = std::make_shared<LambertOnly>(info);
 
       // sample direction from BSDF
       const glm::vec3 wo =
