@@ -22,7 +22,7 @@ int main()
   Camera camera(glm::vec3(0, 1, 3), glm::vec3(0, 0, -1));
 
   Scene scene;
-  scene.loadObj("./CornellBox-Original.obj");
+  scene.loadObj("CornellBox.obj");
 
   LinearIntersector intersector(scene.m_primitives.data(),
                                 scene.m_primitives.size());

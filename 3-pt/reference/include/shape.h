@@ -71,7 +71,7 @@ class Triangle : public Shape
   // https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm?oldformat=true
   bool intersect(const Ray& ray, IntersectInfo& info) const override
   {
-    const float EPS = 1e-6f;
+    const float EPS = 1e-8f;
 
     const glm::vec3 e0 = m_v1 - m_v0;
     const glm::vec3 e1 = m_v2 - m_v0;

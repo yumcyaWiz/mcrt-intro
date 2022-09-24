@@ -14,6 +14,8 @@ class Texture
   {
     spdlog::info("[Texture] loading {}", filepath.generic_string());
 
+    stbi_set_flip_vertically_on_load(true);
+
     // load image with stb image
     int c;
     unsigned char* img =
@@ -39,8 +41,8 @@ class Texture
 
   glm::vec4 fetch(const glm::vec2& texcoord) const
   {
-    const int i = m_width * glm::clamp(texcoord.x, 0.0f, 1.0f);
-    const int j = m_height * glm::clamp(texcoord.y, 0.0f, 1.0f);
+    const int i = (m_width - 1) * glm::clamp(texcoord.x, 0.0f, 1.0f);
+    const int j = (m_height - 1) * glm::clamp(texcoord.y, 0.0f, 1.0f);
     return m_data[i + m_width * j];
   }
 

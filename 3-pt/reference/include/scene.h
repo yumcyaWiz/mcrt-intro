@@ -16,6 +16,8 @@ struct Scene {
   void loadObj(const std::filesystem::path& filepath)
   {
     tinyobj::ObjReaderConfig reader_config;
+    reader_config.triangulate = true;
+
     tinyobj::ObjReader reader;
 
     if (!reader.ParseFromFile(filepath, reader_config)) {
@@ -43,16 +45,22 @@ struct Scene {
     };
     for (const auto& m : materials) {
       // diffuse texture
-      if (!m.diffuse_texname.empty()) { loadTexture(m.diffuse_texname); }
+      if (!m.diffuse_texname.empty()) {
+        loadTexture(filepath.parent_path() / m.diffuse_texname);
+      }
       // specular texture
-      if (!m.specular_texname.empty()) { loadTexture(m.specular_texname); }
+      if (!m.specular_texname.empty()) {
+        loadTexture(filepath.parent_path() / m.specular_texname);
+      }
       // emission texture
-      if (!m.emissive_texname.empty()) { loadTexture(m.emissive_texname); }
+      if (!m.emissive_texname.empty()) {
+        loadTexture(filepath.parent_path() / m.emissive_texname);
+      }
     }
 
     // load materials
     for (const auto& m : materials) {
-      const Material material = loadMaterial(m);
+      const Material material = loadMaterial(m, filepath.parent_path());
       m_materials.push_back(material);
     }
 
@@ -144,7 +152,8 @@ struct Scene {
     spdlog::info("[Scene] number of textures: {}", m_textures.size());
   }
 
-  Material loadMaterial(const tinyobj::material_t& m) const
+  Material loadMaterial(const tinyobj::material_t& m,
+                        const std::filesystem::path& parent_path) const
   {
     Material mat;
 
@@ -153,17 +162,20 @@ struct Scene {
     mat.ke = glm::vec3(m.emission[0], m.emission[1], m.emission[2]);
 
     if (!m.diffuse_texname.empty()) {
-      const int texture_id = m_unique_textures.at(m.diffuse_texname);
+      const int texture_id =
+          m_unique_textures.at(parent_path / m.diffuse_texname);
       mat.kd_tex = &m_textures[texture_id];
     }
 
     if (!m.specular_texname.empty()) {
-      const int texture_id = m_unique_textures.at(m.specular_texname);
+      const int texture_id =
+          m_unique_textures.at(parent_path / m.specular_texname);
       mat.ks_tex = &m_textures[texture_id];
     }
 
     if (!m.emissive_texname.empty()) {
-      const int texture_id = m_unique_textures.at(m.emissive_texname);
+      const int texture_id =
+          m_unique_textures.at(parent_path / m.emissive_texname);
       mat.ke_tex = &m_textures[texture_id];
     }
 
