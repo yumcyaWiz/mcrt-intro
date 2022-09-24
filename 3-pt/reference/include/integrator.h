@@ -12,6 +12,7 @@ class Integrator
 {
  public:
   // compute incoming radiance
+  // ray: primary ray
   virtual glm::vec3 integrate(const Ray& ray, const Intersector* intersector,
                               Sampler& sampler) const = 0;
 };

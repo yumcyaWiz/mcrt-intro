@@ -8,10 +8,17 @@
 class BSDF
 {
  public:
+  // return sampled direction and BSDF value, pdf
+  // u: [0, 1] x [0, 1] random number
+  // wo: view direction in tangent space
+  // f: BSDF value
+  // pdf: pdf value
+  // return: sampled direction in tangent space
   virtual glm::vec3 sampleDirection(const glm::vec2& u, const glm::vec3& wo,
                                     glm::vec3& f, float& pdf) const = 0;
 };
 
+// Lambert Diffuse BRDF only
 class LambertOnly : public BSDF
 {
  public:

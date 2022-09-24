@@ -81,6 +81,7 @@ class Image
     }
   }
 
+  // apply linear RGB to sRGB conversion
   void post_process()
   {
     for (int j = 0; j < m_height; ++j) {

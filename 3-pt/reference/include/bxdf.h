@@ -2,10 +2,12 @@
 #include "glm/glm.hpp"
 #include "sampler.h"
 
+// trigonometric functions in tangent space
 inline float cos_theta(const glm::vec3& w) { return w.y; }
 inline float cos2_theta(const glm::vec3& w) { return w.y * w.y; }
 inline float abs_cos_theta(const glm::vec3& w) { return glm::abs(w.y); }
 
+// return reflection direction
 inline glm::vec3 reflect(const glm::vec3& v, const glm::vec3& n)
 {
   return -v + 2.0f * glm::dot(v, n) * n;
@@ -24,6 +26,7 @@ class BxDF
                                     glm::vec3& f, float& pdf) const = 0;
 };
 
+// Lambert Diffuse BRDF
 class Lambert : public BxDF
 {
  public:
@@ -43,6 +46,7 @@ class Lambert : public BxDF
   glm::vec3 m_albedo;  // diffuse albedo
 };
 
+// Mirror BRDF
 class IdealSpecularReflection : public BxDF
 {
  public:
