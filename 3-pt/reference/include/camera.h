@@ -31,7 +31,8 @@ class Camera
   {
     Ray ret;
     ret.origin = m_origin;
-    ret.direction = glm::normalize(ndc.x * m_right + ndc.y * m_up + m_forward);
+    ret.direction =
+        glm::normalize(ndc.x * m_right + ndc.y * m_up + 1.5f * m_forward);
     return ret;
   }
 
