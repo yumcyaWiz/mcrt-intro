@@ -10,7 +10,7 @@ inline float abs_cos_theta(const glm::vec3& w) { return glm::abs(w.y); }
 // return reflection direction
 inline glm::vec3 reflect(const glm::vec3& v, const glm::vec3& n)
 {
-  return -v + 2.0f * glm::dot(v, n) * n;
+  return glm::normalize(-v + 2.0f * glm::dot(v, n) * n);
 }
 
 class BxDF
