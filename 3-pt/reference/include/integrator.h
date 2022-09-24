@@ -11,8 +11,8 @@
 class Integrator
 {
  public:
-  // compute incoming radiance
-  // ray: primary ray
+  // compute incoming radiance by numerically computing rendering equation
+  // ray: ray generated from camera
   virtual glm::vec3 integrate(const Ray& ray, const Intersector* intersector,
                               Sampler& sampler) const = 0;
 };
@@ -77,5 +77,5 @@ class PathTracing : public Integrator
   }
 
  private:
-  uint32_t m_max_depth;
+  uint32_t m_max_depth;  // maximum ray depth
 };

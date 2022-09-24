@@ -170,11 +170,22 @@ struct Scene {
     return mat;
   }
 
+  // array of triangles
   std::vector<Triangle> m_triangles;
+
+  // used for creating unique textures
   // key: texture filepath, value: texture id
   std::map<std::string, int> m_unique_textures;
+
+  // array of textures
   std::vector<Texture> m_textures;
+
+  // array of materials
   std::vector<Material> m_materials;
+
+  // used for creating primitive
   std::vector<int> m_material_ids;
+
+  // array of primitives
   std::vector<Primitive> m_primitives;
 };

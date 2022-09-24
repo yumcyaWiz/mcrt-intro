@@ -45,7 +45,7 @@ class Texture
   }
 
  private:
-  int m_width;
-  int m_height;
-  std::vector<glm::vec4> m_data;
+  int m_width;                    // width of texture
+  int m_height;                   // height of texture
+  std::vector<glm::vec4> m_data;  // texture image data(RGBA)
 };

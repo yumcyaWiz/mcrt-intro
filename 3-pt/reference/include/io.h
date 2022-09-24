@@ -8,6 +8,11 @@
 #include "glm/glm.hpp"
 #include "stb_image_write.h"
 
+// output ppm image
+// filename: output filename
+// width: width of output image
+// height: height of output image
+// image: image data
 inline void write_ppm(const std::string& filename, int width, int height,
                       const float* image)
 {
@@ -34,6 +39,11 @@ inline void write_ppm(const std::string& filename, int width, int height,
   file.close();
 }
 
+// output png image
+// filename: output filename
+// width: width of output image
+// height: height of output image
+// image: image data
 inline void write_png(const std::string& filename, int width, int height,
                       const float* image)
 {
