@@ -122,7 +122,6 @@ struct Scene {
         }
 
         // load triangles
-        const int triangle_id = m_triangles.size();
         m_triangles.emplace_back(
             tri_vertices[0], tri_vertices[1], tri_vertices[2], tri_normals[0],
             tri_normals[1], tri_normals[2], tri_texcoords[0], tri_texcoords[1],
