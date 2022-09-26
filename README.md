@@ -26,7 +26,7 @@ Each directory has reference implementation under `reference/`.
 |:--|:--|
 |`1-classical-raytracer/`|Start raytracing journey with implementation of classical raytracer|
 |`2-simple-pt/`|Introduce physically based rendering theory and implement simple path tracer|
-|`3-pt/`|Implement texture, image based lighting(IBL), thin lens camera model|
+|`3-pt/`|Implement obj load, texture, image based lighting(IBL), thin lens camera model|
 |`4-bvh/`|Implement bounding volume hierarchy(BVH) and render some obj model|
 |`5-ggx/`|Implement GGX microfacet BRDF|
 |`6-disney-brdf/`|Implement Disney BRDF|
