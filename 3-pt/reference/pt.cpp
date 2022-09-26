@@ -19,7 +19,7 @@ int main()
   const int max_depth = 10;
 
   Image image(width, height);
-  PinholeCamera camera(glm::vec3(0, 1, 3), glm::vec3(0, 0, -1));
+  PinholeCamera camera(glm::vec3(0, 1, 3), glm::vec3(0, 0, -1), 0.33f * M_PIf);
 
   Scene scene;
   scene.loadObj("CornellBox.obj");

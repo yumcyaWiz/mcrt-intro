@@ -39,17 +39,21 @@ class Camera
 class PinholeCamera : public Camera
 {
  public:
-  PinholeCamera(const glm::vec3& origin, const glm::vec3& forward)
+  PinholeCamera(const glm::vec3& origin, const glm::vec3& forward, float fov)
       : Camera(origin, forward)
   {
+    m_focal_length = 1.0f / glm::tan(0.5f * fov);
   }
 
   Ray sampleRay(const glm::vec2& ndc) const override
   {
     Ray ret;
     ret.origin = m_origin;
-    ret.direction =
-        glm::normalize(ndc.x * m_right + ndc.y * m_up + 1.5f * m_forward);
+    ret.direction = glm::normalize(ndc.x * m_right + ndc.y * m_up +
+                                   m_focal_length * m_forward);
     return ret;
   }
+
+ private:
+  float m_focal_length;
 };
