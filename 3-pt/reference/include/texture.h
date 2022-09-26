@@ -10,12 +10,15 @@
 class Texture
 {
  public:
+  Texture() {}
+
   Texture(const std::filesystem::path& filepath)
   {
     const std::string extension = filepath.extension();
     if (extension == ".jpg" || extension == ".png") {
       loadLDR(filepath);
     } else if (extension == ".hdr") {
+      loadHDR(filepath);
     } else {
       throw std::runtime_error("unsupported extension");
     }

@@ -54,6 +54,14 @@ inline glm::vec3 spherical_to_cartesian(float phi, float theta)
                    glm::sin(phi) * sin_theta);
 }
 
+// convert cartesian coordinate to spherical coordinate
+inline void cartesian_to_spherical(const glm::vec3& v, float& phi, float& theta)
+{
+  theta = glm::acos(glm::clamp(v.y, -1.0f, 1.0f));
+  phi = glm::atan(v.z, v.x);
+  if (phi < 0.0f) phi += 2.0f * M_PIf;
+}
+
 // Duff, T., Burgess, J., Christensen, P., Hery, C., Kensler, A., Liani, M., &
 // Villemin, R. (2017). Building an orthonormal basis, revisited. JCGT, 6(1).
 inline void orthonormal_basis(const glm::vec3& normal, glm::vec3& tangent,

@@ -15,7 +15,7 @@ int main()
 {
   const int width = 512;
   const int height = 512;
-  const int n_samples = 100;
+  const int n_samples = 1000;
   const int max_depth = 10;
 
   Image image(width, height);
@@ -27,7 +27,8 @@ int main()
   LinearIntersector intersector(scene.m_primitives.data(),
                                 scene.m_primitives.size());
 
-  UniformSky sky(glm::vec3(1.0f));
+  // UniformSky sky(glm::vec3(1.0f));
+  IBL sky("PaperMill_E_3k.hdr");
 
   Sampler sampler(12);
 

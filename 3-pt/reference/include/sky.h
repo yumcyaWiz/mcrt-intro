@@ -1,8 +1,10 @@
 #pragma once
+#include <cmath>
 #include <filesystem>
 
 #include "core.h"
 #include "glm/glm.hpp"
+#include "texture.h"
 
 class Sky
 {
@@ -11,6 +13,7 @@ class Sky
   virtual glm::vec3 evaluate(const Ray& ray) const = 0;
 };
 
+// uniform color sky
 class UniformSky : public Sky
 {
  public:
@@ -22,10 +25,22 @@ class UniformSky : public Sky
   glm::vec3 m_albedo;
 };
 
+// image based lighting
 class IBL : public Sky
 {
  public:
-  IBL(const std::filesystem::path& filepath) {}
+  IBL(const std::filesystem::path& filepath) : m_texture{filepath} {}
+
+  glm::vec3 evaluate(const Ray& ray) const override
+  {
+    float phi, theta;
+    cartesian_to_spherical(ray.direction, phi, theta);
+
+    glm::vec2 texcoord(phi / (2.0f * M_PIf), 1.0f - theta / M_PIf);
+
+    return m_texture.fetch(texcoord);
+  }
 
  private:
+  Texture m_texture;
 };
