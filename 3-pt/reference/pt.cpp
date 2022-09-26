@@ -19,7 +19,8 @@ int main()
   const int max_depth = 10;
 
   Image image(width, height);
-  PinholeCamera camera(glm::vec3(0, 1, 3), glm::vec3(0, 0, -1), 0.33f * M_PIf);
+  ThinLensCamera camera(glm::vec3(0, 1, 5), glm::vec3(0, 0, -1), 0.33f * M_PIf,
+                        32.0f, 5.0f);
 
   Scene scene;
   scene.loadObj("CornellBox.obj");
@@ -44,7 +45,7 @@ int main()
         ndc.y *= -1.0f;
 
         // sample ray from camera
-        const Ray ray = camera.sampleRay(ndc);
+        const Ray ray = camera.sampleRay(ndc, sampler.next_2d());
 
         // evaluate incoming radiance
         const glm::vec3 radiance =

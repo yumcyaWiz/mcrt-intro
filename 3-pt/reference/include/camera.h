@@ -3,6 +3,7 @@
 
 #include "core.h"
 #include "glm/glm.hpp"
+#include "sampler.h"
 #include "spdlog/spdlog.h"
 
 class Camera
@@ -27,7 +28,8 @@ class Camera
 
   // sample ray from camera
   // ndc(normalized device coordinate): [-1, 1] x [-1, 1]
-  virtual Ray sampleRay(const glm::vec2& ndc) const = 0;
+  // u: [0, 1] x [0, 1] random number
+  virtual Ray sampleRay(const glm::vec2& ndc, const glm::vec2& u) const = 0;
 
  protected:
   glm::vec3 m_origin;   // camera position
@@ -45,7 +47,7 @@ class PinholeCamera : public Camera
     m_focal_length = 1.0f / glm::tan(0.5f * fov);
   }
 
-  Ray sampleRay(const glm::vec2& ndc) const override
+  Ray sampleRay(const glm::vec2& ndc, const glm::vec2& u) const override
   {
     Ray ret;
     ret.origin = m_origin;
@@ -56,4 +58,50 @@ class PinholeCamera : public Camera
 
  private:
   float m_focal_length;
+};
+
+class ThinLensCamera : public Camera
+{
+ public:
+  ThinLensCamera(const glm::vec3& origin, const glm::vec3& forward, float fov,
+                 float fnumber, float focus_distance)
+      : Camera(origin, forward)
+  {
+    m_focal_length = 1.0f / glm::tan(0.5f * fov);
+    m_lens_radius = 2.0f * m_focal_length / fnumber;
+
+    m_b = focus_distance;
+    m_a = 1.0f / (1.0f + m_focal_length - 1.0f / m_b);
+
+    spdlog::info("[ThinLensCamera] focal length: {}", m_focal_length);
+    spdlog::info("[ThinLensCamera] lens radius: {}", m_lens_radius);
+  }
+
+  Ray sampleRay(const glm::vec2& ndc, const glm::vec2& u) const override
+  {
+    Ray ret;
+
+    const glm::vec3 p_sensor = m_origin - ndc.x * m_right - ndc.y * m_up;
+    const glm::vec3 p_lens_center = m_origin + m_focal_length * m_forward;
+
+    const glm::vec2 p_disk = m_lens_radius * sample_uniform_disk(u);
+    const glm::vec3 p_lens = p_lens_center + glm::vec3(p_disk, 0.0f);
+    const glm::vec3 sensor_to_lens = glm::normalize(p_lens - p_sensor);
+
+    const glm::vec3 sensor_to_lens_center =
+        glm::normalize(p_lens_center - p_sensor);
+    const glm::vec3 p_object =
+        p_sensor + ((m_a + m_b) / glm::dot(sensor_to_lens_center, m_forward)) *
+                       sensor_to_lens_center;
+
+    ret.origin = p_lens;
+    ret.direction = glm::normalize(p_object - p_lens);
+    return ret;
+  }
+
+ private:
+  float m_lens_radius;
+  float m_focal_length;
+  float m_a;
+  float m_b;
 };
