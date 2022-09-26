@@ -27,6 +27,8 @@ int main()
   LinearIntersector intersector(scene.m_primitives.data(),
                                 scene.m_primitives.size());
 
+  UniformSky sky(glm::vec3(1.0f));
+
   Sampler sampler(12);
 
   PathTracing integrator(max_depth);
@@ -45,7 +47,7 @@ int main()
 
         // evaluate incoming radiance
         const glm::vec3 radiance =
-            integrator.integrate(ray, &intersector, sampler);
+            integrator.integrate(ray, &intersector, &sky, sampler);
 
         image.addPixel(i, j, radiance);
       }

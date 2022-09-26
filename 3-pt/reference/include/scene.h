@@ -13,6 +13,7 @@
 struct Scene {
   Scene() {}
 
+  // load obj model with tinyobjloader
   void loadObj(const std::filesystem::path& filepath)
   {
     tinyobj::ObjReaderConfig reader_config;
@@ -152,6 +153,7 @@ struct Scene {
     spdlog::info("[Scene] number of textures: {}", m_textures.size());
   }
 
+  // convert tinyobj::material_t to Material
   Material loadMaterial(const tinyobj::material_t& m,
                         const std::filesystem::path& parent_path) const
   {
