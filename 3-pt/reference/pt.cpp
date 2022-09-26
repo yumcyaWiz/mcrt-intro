@@ -15,11 +15,11 @@ int main()
 {
   const int width = 512;
   const int height = 512;
-  const int n_samples = 1000;
+  const int n_samples = 100;
   const int max_depth = 10;
 
   Image image(width, height);
-  Camera camera(glm::vec3(0, 1, 3), glm::vec3(0, 0, -1));
+  PinholeCamera camera(glm::vec3(0, 1, 3), glm::vec3(0, 0, -1));
 
   Scene scene;
   scene.loadObj("CornellBox.obj");

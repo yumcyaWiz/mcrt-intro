@@ -8,8 +8,8 @@
 class Camera
 {
  public:
-  Camera(const glm::vec3& origin_, const glm::vec3& forward_)
-      : m_origin(origin_), m_forward(forward_)
+  Camera(const glm::vec3& origin, const glm::vec3& forward)
+      : m_origin(origin), m_forward(forward)
 
   {
     // calculate right, up direction from forward direction
@@ -25,9 +25,26 @@ class Camera
     spdlog::info("[Camera] Up: ({}, {}, {})", m_up.x, m_up.y, m_up.z);
   }
 
-  // sample ray from pinhole camera
+  // sample ray from camera
   // ndc(normalized device coordinate): [-1, 1] x [-1, 1]
-  Ray sampleRay(const glm::vec2& ndc) const
+  virtual Ray sampleRay(const glm::vec2& ndc) const = 0;
+
+ protected:
+  glm::vec3 m_origin;   // camera position
+  glm::vec3 m_forward;  // camera forward direction
+  glm::vec3 m_right;    // camera right direction
+  glm::vec3 m_up;       // camera up direction
+};
+
+class PinholeCamera : public Camera
+{
+ public:
+  PinholeCamera(const glm::vec3& origin, const glm::vec3& forward)
+      : Camera(origin, forward)
+  {
+  }
+
+  Ray sampleRay(const glm::vec2& ndc) const override
   {
     Ray ret;
     ret.origin = m_origin;
@@ -35,10 +52,4 @@ class Camera
         glm::normalize(ndc.x * m_right + ndc.y * m_up + 1.5f * m_forward);
     return ret;
   }
-
- private:
-  glm::vec3 m_origin;   // camera position
-  glm::vec3 m_forward;  // camera forward direction
-  glm::vec3 m_right;    // camera right direction
-  glm::vec3 m_up;       // camera up direction
 };
