@@ -46,6 +46,14 @@ class Sampler
   pcg32_random_t state;
 };
 
+// uniform disk sampling
+inline glm::vec2 sample_uniform_disk(const glm::vec2& u)
+{
+  const float r = glm::sqrt(u.x);
+  const float theta = 2.0f * M_PIf * u.y;
+  return r * glm::vec2(glm::cos(theta), glm::sin(theta));
+}
+
 // uniform hemisphere sampling
 inline glm::vec3 sample_hemisphere(const glm::vec2& u)
 {
