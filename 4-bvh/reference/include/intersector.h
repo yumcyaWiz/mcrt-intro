@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include <cstddef>
 #include <limits>
 #include <memory>
@@ -11,7 +12,7 @@
 class Intersector
 {
  public:
-  Intersector(const Primitive* primitives, uint32_t n_primitives)
+  Intersector(Primitive* primitives, uint32_t n_primitives)
       : m_primitives(primitives), m_n_primitives(n_primitives)
   {
   }
@@ -20,8 +21,8 @@ class Intersector
   virtual bool intersect(const Ray& ray, IntersectInfo& info) const = 0;
 
  protected:
-  const Primitive* m_primitives;  // array of primitives
-  uint32_t m_n_primitives;        // number of primitives
+  Primitive* m_primitives;  // array of primitives
+  uint32_t m_n_primitives;  // number of primitives
 };
 
 // search all intersectables
@@ -29,7 +30,7 @@ class Intersector
 class LinearIntersector : public Intersector
 {
  public:
-  LinearIntersector(const Primitive* primitives, uint32_t n_primitives)
+  LinearIntersector(Primitive* primitives, uint32_t n_primitives)
       : Intersector(primitives, n_primitives)
   {
   }
@@ -55,12 +56,28 @@ class LinearIntersector : public Intersector
 class BVH : public Intersector
 {
  public:
-  BVH(const Primitive* primitives, uint32_t n_primitives)
+  BVH(Primitive* primitives, uint32_t n_primitives)
       : Intersector(primitives, n_primitives)
   {
   }
 
-  bool intersect(const Ray& ray, Intersector& info) { return false; }
+  // build bvh nodes
+  void buildBVH()
+  {
+    // build bvh nodes from root
+    m_root = buildBVHNode(0, m_n_primitives);
+  }
+
+  bool intersect(const Ray& ray, IntersectInfo& info)
+  {
+    // precompute inverse of ray direction, sign
+    const glm::vec3 dir_inv = 1.0f / ray.direction;
+    int dir_inv_sign[3];
+    for (int i = 0; i < 3; ++i) { dir_inv_sign[i] = dir_inv[i] > 0 ? 0 : 1; }
+
+    // intersect bvh nodes from root
+    return intersectNode(m_root, ray, dir_inv, dir_inv_sign, info);
+  }
 
  private:
   struct BVHNode {
@@ -71,7 +88,7 @@ class BVH : public Intersector
     BVHNode* children[2];               // pointer to child node
   };
 
-  BVHNode* root;  // pointer to root node
+  BVHNode* m_root;  // pointer to root node
 
   BVHNode* createLeafNode(BVHNode* node, const AABB& bbox,
                           int prim_indices_offset, int n_primitives)
@@ -93,5 +110,91 @@ class BVH : public Intersector
 
     // calculate AABB
     AABB bbox;
+    for (int i = primitive_start; i < primitive_end; ++i) {
+      bbox = bbox.mergeAABB(m_primitives[i].getBounds());
+    }
+
+    const int n_primitives = primitive_end - primitive_start;
+    if (n_primitives <= 4) {
+      // create leaf node
+      return createLeafNode(node, bbox, primitive_start, primitive_end);
+    }
+
+    // calculate split AABB
+    // NOTE: using bbox doesn't work well when splitting
+    AABB split_bbox;
+    for (int i = primitive_start; i < primitive_end; ++i) {
+      split_bbox = split_bbox.mergeAABB(m_primitives[i].getBounds().center());
+    }
+
+    // split axis
+    const int split_axis = split_bbox.logestAxis();
+
+    // split position
+    const float split_pos = split_bbox.center()[split_axis];
+
+    // split bounding box
+    const int split_idx = primitive_start + n_primitives / 2;
+    std::nth_element(m_primitives + primitive_start, m_primitives + split_idx,
+                     m_primitives + primitive_end,
+                     [&](const auto& prim1, const auto& prim2) {
+                       return prim1.getBounds().center()[split_axis] <
+                              prim2.getBounds().center()[split_axis];
+                     });
+
+    // if splitting failed, create leaf node
+    if (split_idx == primitive_start || split_idx == primitive_end) {
+      return createLeafNode(node, bbox, primitive_start, primitive_end);
+    }
+
+    node->bbox = bbox;
+    node->primitive_indices_offset = primitive_start;
+    node->axis = split_axis;
+
+    // build left child nodes
+    node->children[0] = buildBVHNode(primitive_start, split_idx);
+    // build right child nodes
+    node->children[1] = buildBVHNode(split_idx, primitive_end);
+
+    return node;
+  }
+
+  // delete bvh nodes recursively
+  void deleteBVHNode(BVHNode* node)
+  {
+    if (node->children[0]) { deleteBVHNode(node->children[0]); }
+    if (node->children[1]) { deleteBVHNode(node->children[1]); }
+    delete node;
+  }
+
+  // traverse bvh nodes recursively
+  bool intersectNode(const BVHNode* node, const Ray& ray,
+                     const glm::vec3& dir_inv, const int dir_inv_sign[3],
+                     IntersectInfo& info) const
+  {
+    bool hit = false;
+
+    // intersect with bounding box
+    if (node->bbox.intersect(ray, dir_inv, dir_inv_sign)) {
+      if (node->children[0] == nullptr && node->children[1] == nullptr) {
+        // when leaf node, intersect with primitives
+        const int primitive_end =
+            node->primitive_indices_offset + node->n_primitives;
+        for (int i = node->primitive_indices_offset; i < primitive_end; ++i) {
+          if (m_primitives[i].intersect(ray, info)) {
+            hit = true;
+            ray.tmax = info.t;
+          }
+        }
+      } else {
+        // intersect with child nodes
+        hit |= intersectNode(node->children[dir_inv_sign[node->axis]], ray,
+                             dir_inv, dir_inv_sign, info);
+        hit |= intersectNode(node->children[1 - dir_inv_sign[node->axis]], ray,
+                             dir_inv, dir_inv_sign, info);
+      }
+    }
+
+    return hit;
   }
 };
