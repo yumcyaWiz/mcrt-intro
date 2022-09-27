@@ -1,5 +1,3 @@
-#include <memory>
-//
 #include "bsdf.h"
 #include "camera.h"
 #include "core.h"
