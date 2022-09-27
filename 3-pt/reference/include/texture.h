@@ -24,6 +24,7 @@ class Texture
     }
   }
 
+  // fetch texture
   glm::vec4 fetch(const glm::vec2& texcoord) const
   {
     const int i = (m_width - 1) * glm::clamp(texcoord.x, 0.0f, 1.0f);

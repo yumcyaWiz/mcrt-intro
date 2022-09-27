@@ -22,7 +22,7 @@ class UniformSky : public Sky
   glm::vec3 evaluate(const Ray& ray) const override { return m_albedo; }
 
  private:
-  glm::vec3 m_albedo;
+  glm::vec3 m_albedo;  // sky color
 };
 
 // image based lighting
@@ -42,5 +42,5 @@ class IBL : public Sky
   }
 
  private:
-  Texture m_texture;
+  Texture m_texture;  // ibl texture
 };

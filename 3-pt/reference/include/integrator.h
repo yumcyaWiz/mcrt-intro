@@ -18,6 +18,7 @@ class Integrator
                               const Sky* sky, Sampler& sampler) const = 0;
 };
 
+// pure path tracing integrator
 class PathTracing : public Integrator
 {
  public:
@@ -38,15 +39,15 @@ class PathTracing : public Integrator
       throughput /= russian_roulette_prob;
 
       IntersectInfo info;
-      // ray goes to sky
       if (!intersector->intersect(ray, info)) {
+        // ray goes to sky
         // evaluate environment light
         radiance += throughput * sky->evaluate(ray);
         break;
       }
 
-      // ray hits area light
       if (info.primitive->has_emission()) {
+        // ray hits area light
         // add Le
         radiance += throughput * info.primitive->material->ke;
         break;

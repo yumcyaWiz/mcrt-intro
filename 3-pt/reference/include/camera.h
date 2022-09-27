@@ -57,7 +57,7 @@ class PinholeCamera : public Camera
   }
 
  private:
-  float m_focal_length;
+  float m_focal_length;  // distance from sensor to pinhole
 };
 
 class ThinLensCamera : public Camera
@@ -100,8 +100,8 @@ class ThinLensCamera : public Camera
   }
 
  private:
-  float m_lens_radius;
-  float m_focal_length;
-  float m_a;
-  float m_b;
+  float m_lens_radius;   // lens radius
+  float m_focal_length;  // distance from sensor to lens
+  float m_a;             // lens equation(1/a + 1/b = 1/f) a
+  float m_b;             // lens equation b
 };
