@@ -23,3 +23,6 @@ add_subdirectory("2-simple-pt/")
 
 # 3-pt
 add_subdirectory("3-pt/")
+
+# 4-bvh
+add_subdirectory("4-bvh/")
