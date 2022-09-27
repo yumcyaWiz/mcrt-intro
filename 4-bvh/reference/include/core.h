@@ -24,11 +24,13 @@ struct Ray {
 struct Primitive;
 
 struct IntersectInfo {
-  float t;                     // hit distance
-  glm::vec3 position;          // hit position
-  glm::vec3 normal;            // hit normal
-  glm::vec2 texcoord;          // hit texcoord
-  const Primitive* primitive;  // hit primitive pointer
+  float t = 0.0f;                        // hit distance
+  glm::vec3 position = glm::vec3(0.0f);  // hit position
+  glm::vec3 normal = glm::vec3(0.0f);    // hit normal
+  glm::vec2 texcoord = glm::vec2(0.0f);  // hit texcoord
+  const Primitive* primitive = nullptr;  // hit primitive pointer
+
+  int bvh_depth = 0;  // bvh intersection count(for debugging purpose)
 };
 
 struct Material {

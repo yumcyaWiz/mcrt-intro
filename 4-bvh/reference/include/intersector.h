@@ -112,6 +112,9 @@ class BVH : public Intersector
   BVHNode* m_root;  // pointer to root node
   BVHStatistics m_stats;
 
+  static constexpr int m_n_primitives_in_leaf_node =
+      4;  // number of primitives in the leaf node
+
   BVHNode* createLeafNode(BVHNode* node, const AABB& bbox,
                           int prim_indices_offset, int n_primitives)
   {
@@ -138,7 +141,7 @@ class BVH : public Intersector
     }
 
     const int n_primitives = primitive_end - primitive_start;
-    if (n_primitives <= 4) {
+    if (n_primitives <= m_n_primitives_in_leaf_node) {
       // create leaf node
       return createLeafNode(node, bbox, primitive_start, n_primitives);
     }
@@ -205,6 +208,8 @@ class BVH : public Intersector
                      IntersectInfo& info) const
   {
     bool hit = false;
+
+    info.bvh_depth++;
 
     // intersect with bounding box
     if (node->bbox.intersect(ray, dir_inv, dir_inv_sign)) {
