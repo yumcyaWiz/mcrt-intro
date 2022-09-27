@@ -61,14 +61,26 @@ class BVH : public Intersector
   {
   }
 
+  ~BVH()
+  {
+    if (m_root) { deleteBVHNode(m_root); }
+  }
+
   // build bvh nodes
   void buildBVH()
   {
     // build bvh nodes from root
     m_root = buildBVHNode(0, m_n_primitives);
+
+    m_stats.n_nodes = m_stats.n_internal_nodes + m_stats.n_leaf_nodes;
+
+    spdlog::info("[BVH] number of nodes: {}", m_stats.n_nodes);
+    spdlog::info("[BVH] number of internal nodes: {}",
+                 m_stats.n_internal_nodes);
+    spdlog::info("[BVH] number of leaf nodes: {}", m_stats.n_leaf_nodes);
   }
 
-  bool intersect(const Ray& ray, IntersectInfo& info)
+  bool intersect(const Ray& ray, IntersectInfo& info) const override
   {
     // precompute inverse of ray direction, sign
     const glm::vec3 dir_inv = 1.0f / ray.direction;
@@ -76,7 +88,10 @@ class BVH : public Intersector
     for (int i = 0; i < 3; ++i) { dir_inv_sign[i] = dir_inv[i] > 0 ? 0 : 1; }
 
     // intersect bvh nodes from root
-    return intersectNode(m_root, ray, dir_inv, dir_inv_sign, info);
+    float ray_tmax = ray.tmax;
+    bool hit = intersectNode(m_root, ray, dir_inv, dir_inv_sign, info);
+    ray.tmax = ray_tmax;
+    return hit;
   }
 
  private:
@@ -88,7 +103,14 @@ class BVH : public Intersector
     BVHNode* children[2];               // pointer to child node
   };
 
+  struct BVHStatistics {
+    int n_nodes = 0;           // number of nodes
+    int n_internal_nodes = 0;  // number of internal nodes
+    int n_leaf_nodes = 0;      // number of leaf nodes
+  };
+
   BVHNode* m_root;  // pointer to root node
+  BVHStatistics m_stats;
 
   BVHNode* createLeafNode(BVHNode* node, const AABB& bbox,
                           int prim_indices_offset, int n_primitives)
@@ -98,6 +120,7 @@ class BVH : public Intersector
     node->n_primitives = n_primitives;
     node->children[0] = nullptr;
     node->children[1] = nullptr;
+    m_stats.n_leaf_nodes++;
     return node;
   }
 
@@ -114,10 +137,14 @@ class BVH : public Intersector
       bbox = bbox.mergeAABB(m_primitives[i].getBounds());
     }
 
+    spdlog::info("{}, {}, {}, {}, {}, {}", bbox.bounds[0].x, bbox.bounds[0].y,
+                 bbox.bounds[0].z, bbox.bounds[1].x, bbox.bounds[1].y,
+                 bbox.bounds[1].z);
+
     const int n_primitives = primitive_end - primitive_start;
     if (n_primitives <= 4) {
       // create leaf node
-      return createLeafNode(node, bbox, primitive_start, primitive_end);
+      return createLeafNode(node, bbox, primitive_start, n_primitives);
     }
 
     // calculate split AABB
@@ -144,7 +171,14 @@ class BVH : public Intersector
 
     // if splitting failed, create leaf node
     if (split_idx == primitive_start || split_idx == primitive_end) {
-      return createLeafNode(node, bbox, primitive_start, primitive_end);
+      spdlog::info("[BVH] splitting failed");
+      spdlog::info("[BVH] n_primitives: {}", n_primitives);
+      spdlog::info("[BVH] split_axis: {}", split_axis);
+      spdlog::info("[BVH] split_pos: {}", split_pos);
+      spdlog::info("[BVH] primitive_start: {}", primitive_start);
+      spdlog::info("[BVH] split_idx: {}", split_idx);
+      spdlog::info("[BVH] primitive_end: {}", primitive_end);
+      return createLeafNode(node, bbox, primitive_start, n_primitives);
     }
 
     node->bbox = bbox;
@@ -155,6 +189,8 @@ class BVH : public Intersector
     node->children[0] = buildBVHNode(primitive_start, split_idx);
     // build right child nodes
     node->children[1] = buildBVHNode(split_idx, primitive_end);
+
+    m_stats.n_internal_nodes++;
 
     return node;
   }

@@ -22,8 +22,8 @@ int main()
   Scene scene;
   scene.loadObj("CornellBox.obj");
 
-  LinearIntersector intersector(scene.m_primitives.data(),
-                                scene.m_primitives.size());
+  BVH intersector(scene.m_primitives.data(), scene.m_primitives.size());
+  intersector.buildBVH();
 
   UniformSky sky(glm::vec3(1.0f));
 
