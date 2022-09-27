@@ -1,15 +1,21 @@
 #pragma once
 #include <cmath>
 
+#include "aabb.h"
 #include "core.h"
 #include "glm/glm.hpp"
 #include "spdlog/spdlog.h"
+
+#define AABB_EPS 1e-3f
 
 class Shape
 {
  public:
   // find ray intersection
   virtual bool intersect(const Ray& ray, IntersectInfo& info) const = 0;
+
+  // calculate bounding box
+  virtual AABB getBounds() const = 0;
 };
 
 class Sphere : public Shape
@@ -42,6 +48,12 @@ class Sphere : public Shape
     info.normal = glm::normalize(info.position - m_center);
 
     return true;
+  }
+
+  AABB getBounds() const override
+  {
+    const float r = m_radius + AABB_EPS;
+    return AABB(m_center - r, m_center + r);
   }
 
  private:
@@ -97,6 +109,13 @@ class Triangle : public Shape
     info.texcoord = (1.0f - u - v) * m_t0 + u * m_t1 + v * m_t2;
 
     return true;
+  }
+
+  AABB getBounds() const override
+  {
+    const glm::vec3 pmin = glm::min(m_v0, glm::min(m_v1, m_v2));
+    const glm::vec3 pmax = glm::max(m_v0, glm::max(m_v1, m_v2));
+    return AABB(pmin - AABB_EPS, pmax + AABB_EPS);
   }
 
  private:
