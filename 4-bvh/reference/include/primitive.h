@@ -25,6 +25,9 @@ struct Primitive {
     return false;
   }
 
+  // get bounding box
+  AABB getBounds() const { return shape->getBounds(); }
+
   // has emission or not
   bool has_emission() const
   {

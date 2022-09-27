@@ -14,7 +14,7 @@ class Shape
   // find ray intersection
   virtual bool intersect(const Ray& ray, IntersectInfo& info) const = 0;
 
-  // calculate bounding box
+  // get bounding box
   virtual AABB getBounds() const = 0;
 };
 
