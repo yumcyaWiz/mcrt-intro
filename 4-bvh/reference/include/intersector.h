@@ -137,10 +137,6 @@ class BVH : public Intersector
       bbox = bbox.mergeAABB(m_primitives[i].getBounds());
     }
 
-    spdlog::info("{}, {}, {}, {}, {}, {}", bbox.bounds[0].x, bbox.bounds[0].y,
-                 bbox.bounds[0].z, bbox.bounds[1].x, bbox.bounds[1].y,
-                 bbox.bounds[1].z);
-
     const int n_primitives = primitive_end - primitive_start;
     if (n_primitives <= 4) {
       // create leaf node
