@@ -75,7 +75,7 @@ struct AABB {
     AABB ret;
     for (int i = 0; i < 3; ++i) {
       ret.bounds[0][i] = glm::min(bounds[0][i], b.bounds[0][i]);
-      ret.bounds[1][i] = glm::min(bounds[1][i], b.bounds[1][i]);
+      ret.bounds[1][i] = glm::max(bounds[1][i], b.bounds[1][i]);
     }
     return ret;
   }
