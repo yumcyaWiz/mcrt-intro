@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <limits>
 #include <memory>
+#include <stdexcept>
 #include <vector>
 
 #include "aabb.h"
@@ -132,11 +133,8 @@ class BVH : public Intersector
   // primitive_end: end index of primitives
   BVHNode* buildBVHNode(int primitive_start, int primitive_end)
   {
-    BVHNode* node = new BVHNode;
-
     // TODO: implement this
-
-    return node;
+    throw std::runtime_error("not implemented");
   }
 
   // delete bvh nodes recursively
@@ -153,6 +151,6 @@ class BVH : public Intersector
                      IntersectInfo& info) const
   {
     // TODO: implement this
-    return false;
+    throw std::runtime_error("not implemented");
   }
 };
