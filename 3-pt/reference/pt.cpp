@@ -17,7 +17,7 @@ int main()
   const int max_depth = 10;
 
   Image image(width, height);
-  ThinLensCamera camera(glm::vec3(0, 1, 5), glm::vec3(0, 0, -1), 0.33f * M_PIf,
+  ThinLensCamera camera(glm::vec3(0, 1, 3), glm::vec3(0, 0, -1), 0.33f * M_PIf,
                         32.0f, 5.0f);
 
   Scene scene;

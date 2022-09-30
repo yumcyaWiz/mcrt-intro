@@ -75,14 +75,17 @@ class ThinLensCamera : public Camera
 
     spdlog::info("[ThinLensCamera] focal length: {}", m_focal_length);
     spdlog::info("[ThinLensCamera] lens radius: {}", m_lens_radius);
+    spdlog::info("[ThinLensCamera] a: {}", m_a);
+    spdlog::info("[ThinLensCamera] b: {}", m_b);
   }
 
   Ray sampleRay(const glm::vec2& ndc, const glm::vec2& u) const override
   {
     Ray ret;
 
-    const glm::vec3 p_sensor = m_origin - ndc.x * m_right - ndc.y * m_up;
-    const glm::vec3 p_lens_center = m_origin + m_focal_length * m_forward;
+    const glm::vec3 p_sensor =
+        m_origin - ndc.x * m_right - ndc.y * m_up - m_focal_length * m_forward;
+    const glm::vec3 p_lens_center = m_origin;
 
     const glm::vec2 p_disk = m_lens_radius * sample_uniform_disk(u);
     const glm::vec3 p_lens = p_lens_center + glm::vec3(p_disk, 0.0f);
