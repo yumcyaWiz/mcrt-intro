@@ -46,3 +46,7 @@ Each directory has reference implementation under `reference/`.
 ### 3-pt
 
 ![](img/3-pt.png)
+
+### 4-bvh
+
+![](img/4-bvh.png)

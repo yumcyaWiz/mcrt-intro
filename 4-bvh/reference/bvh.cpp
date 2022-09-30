@@ -14,16 +14,14 @@ int main()
   const int width = 512;
   const int height = 512;
   const int n_samples = 100;
-  const int max_depth = 5;
+  const int max_depth = 10;
 
   Image image(width, height);
-  // PinholeCamera camera(glm::vec3(0, 17, 50), glm::vec3(0, 0, -1),
-  //                      0.33f * M_PIf);
   PinholeCamera camera(glm::vec3(0, 0, 0.5), glm::vec3(0, 0, -1),
                        0.33f * M_PIf);
 
   Scene scene;
-  scene.loadObj("head_with_light/head_with_light.obj");
+  scene.loadObj("./head_with_light/head_with_light.obj");
 
   BVHOptimized intersector(scene.m_primitives.data(),
                            scene.m_primitives.size());
