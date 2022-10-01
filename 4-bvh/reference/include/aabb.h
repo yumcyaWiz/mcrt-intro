@@ -2,6 +2,7 @@
 #include "core.h"
 #include "glm/glm.hpp"
 
+// axis aligned bounding box(AABB)
 struct AABB {
   glm::vec3 bounds[2];  // 0 - min, 1 - max
 
@@ -35,6 +36,10 @@ struct AABB {
     }
   }
 
+  // intersect ray with AABB
+  // ray: given ray
+  // dir_inv: inverse of ray direction
+  // dir_inv_sign: sign of inversed ray direction
   bool intersect(const Ray& ray, const glm::vec3& dir_inv,
                  const int dir_inv_sign[3]) const
   {
