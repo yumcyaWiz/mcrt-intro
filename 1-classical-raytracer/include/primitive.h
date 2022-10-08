@@ -1,5 +1,4 @@
 #pragma once
-#include <memory>
 
 #include "core.h"
 #include "shape.h"

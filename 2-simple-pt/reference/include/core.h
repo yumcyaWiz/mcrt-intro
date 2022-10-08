@@ -63,12 +63,22 @@ inline void orthonormal_basis(const glm::vec3& normal, glm::vec3& tangent,
   bitangent = glm::vec3(b, sign + normal.y * normal.y * a, -normal.y);
 }
 
+// convert given vector from world to tangent space
+// v: world space vector
+// t: tangent
+// n: normal
+// b: bitangent
 inline glm::vec3 world_to_local(const glm::vec3& v, const glm::vec3& t,
                                 const glm::vec3& n, const glm::vec3& b)
 {
   return glm::vec3(glm::dot(v, t), glm::dot(v, n), glm::dot(v, b));
 }
 
+// convert given vector from local to world space
+// v: tangent space vector
+// t: tangent
+// n: normal
+// b: bitangent
 inline glm::vec3 local_to_world(const glm::vec3& v, const glm::vec3& t,
                                 const glm::vec3& n, const glm::vec3& b)
 {
