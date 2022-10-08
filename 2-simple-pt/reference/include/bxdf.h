@@ -24,6 +24,7 @@ class BxDF
                                     glm::vec3& f, float& pdf) const = 0;
 };
 
+// Lambert Diffuse BRDF
 class Lambert : public BxDF
 {
  public:

@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <iterator>
+#include <stdexcept>
 
 #include "core.h"
 #include "glm/glm.hpp"
@@ -50,10 +51,12 @@ class Sampler
 inline glm::vec3 sample_hemisphere(const glm::vec2& u)
 {
   // TODO: implement this
+  throw std::runtime_error("not implemented");
 }
 
 // cosine weighted hemisphere sampling
 inline glm::vec3 sample_cosine_weighted_hemisphere(const glm::vec2& u)
 {
   // TODO: implement this
+  throw std::runtime_error("not implemented");
 }
