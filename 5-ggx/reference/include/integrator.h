@@ -14,8 +14,8 @@ class Integrator
  public:
   // compute incoming radiance by numerically computing rendering equation
   // ray: ray generated from camera
-  virtual glm::vec3 integrate(const Ray& ray, const Intersector* intersector,
-                              const Sky* sky, Sampler& sampler) const = 0;
+  virtual glm::vec3 integrate(const Ray& ray, const Intersector& intersector,
+                              const Sky& sky, Sampler& sampler) const = 0;
 };
 
 // pure path tracing integrator
@@ -24,8 +24,8 @@ class PathTracing : public Integrator
  public:
   PathTracing(uint32_t max_depth) : m_max_depth(max_depth) {}
 
-  glm::vec3 integrate(const Ray& ray_in, const Intersector* intersector,
-                      const Sky* sky, Sampler& sampler) const override
+  glm::vec3 integrate(const Ray& ray_in, const Intersector& intersector,
+                      const Sky& sky, Sampler& sampler) const override
   {
     Ray ray = ray_in;
     glm::vec3 radiance(0.0f);
@@ -39,10 +39,10 @@ class PathTracing : public Integrator
       throughput /= russian_roulette_prob;
 
       IntersectInfo info;
-      if (!intersector->intersect(ray, info)) {
+      if (!intersector.intersect(ray, info)) {
         // ray goes to sky
         // evaluate environment light
-        radiance += throughput * sky->evaluate(ray);
+        radiance += throughput * sky.evaluate(ray);
         break;
       }
 
@@ -58,14 +58,14 @@ class PathTracing : public Integrator
       orthonormal_basis(info.normal, tangent, bitangent);
 
       // setup BSDF
-      const std::shared_ptr<BSDF> bsdf = std::make_shared<LambertOnly>(info);
+      const auto bsdf = LambertOnly(info);
 
       // sample direction from BSDF
       const glm::vec3 wo =
           world_to_local(-ray.direction, tangent, info.normal, bitangent);
       glm::vec3 f;
       float pdf;
-      const glm::vec3 wi = bsdf->sampleDirection(sampler.next_2d(), wo, f, pdf);
+      const glm::vec3 wi = bsdf.sampleDirection(sampler.next_2d(), wo, f, pdf);
 
       // update throughput
       throughput *= f * abs_cos_theta(wi) / pdf;

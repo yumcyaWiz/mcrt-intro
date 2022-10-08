@@ -20,7 +20,7 @@ int main()
   PinholeCamera camera(glm::vec3(0, 1, 3), glm::vec3(0, 0, -1), 0.33f * M_PIf);
 
   Scene scene;
-  scene.loadObj("./CornellBox-Original.obj");
+  scene.loadObj("./CornellBox.obj");
 
   BVHOptimized intersector(scene.m_primitives.data(),
                            scene.m_primitives.size());
@@ -46,7 +46,7 @@ int main()
 
         // evaluate incoming radiance
         const glm::vec3 radiance =
-            integrator.integrate(ray, &intersector, &sky, sampler);
+            integrator.integrate(ray, intersector, sky, sampler);
 
         image.addPixel(i, j, radiance);
       }
