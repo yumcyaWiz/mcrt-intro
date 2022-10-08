@@ -47,7 +47,7 @@ int main()
 
         // evaluate incoming radiance
         const glm::vec3 radiance =
-            integrator.integrate(ray, &intersector, &sky, sampler);
+            integrator.integrate(ray, intersector, sky, sampler);
 
         image.addPixel(i, j, radiance);
       }
