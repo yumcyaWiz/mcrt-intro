@@ -26,3 +26,6 @@ add_subdirectory("3-pt/")
 
 # 4-bvh
 add_subdirectory("4-bvh/")
+
+# 5-ggx
+add_subdirectory("5-ggx/")
