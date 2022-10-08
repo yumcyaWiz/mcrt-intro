@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdio>
+#include <stdexcept>
 
 #include "core.h"
 #include "glm/glm.hpp"
@@ -14,6 +15,7 @@ class Camera
   {
     // TODO: implement this
     // calculate right, up direction from forward direction
+    throw std::runtime_error("not implemented");
   }
 
   // sample ray from pinhole camera
@@ -21,6 +23,7 @@ class Camera
   Ray sampleRay(const glm::vec2& ndc) const
   {
     // TODO: implement this
+    throw std::runtime_error("not implemented");
   }
 
  private:

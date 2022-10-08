@@ -1,5 +1,6 @@
 #pragma once
 #include <cmath>
+#include <stdexcept>
 
 #include "core.h"
 #include "glm/glm.hpp"
@@ -22,6 +23,7 @@ class Sphere : public Shape
   bool intersect(const Ray& ray, IntersectInfo& info) const override
   {
     // TODO: implement this
+    throw std::runtime_error("not implemented");
   }
 
  private:
