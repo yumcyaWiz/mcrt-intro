@@ -80,7 +80,7 @@ class DiffuseSpecularMetal : public BSDF
     glm::vec3 n, k;
     artist_friendly_metallic_fresnel(
         glm::clamp(base_color, glm::vec3(0.01f), glm::vec3(0.99f)),
-        glm::clamp(base_color, glm::vec3(0.01), glm::vec3(0.99f)), n, k);
+        glm::clamp(specular_color, glm::vec3(0.01), glm::vec3(0.99f)), n, k);
     m_metal = MicrofacetReflectionConductor(n, k, specular_roughness,
                                             specular_anisotropy);
 

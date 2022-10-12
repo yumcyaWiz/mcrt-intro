@@ -48,7 +48,9 @@ int main()
         const glm::vec3 radiance =
             integrator.integrate(ray, intersector, sky, sampler);
 
-        image.addPixel(i, j, radiance);
+        if (!isinf(radiance) && !isnan(radiance)) {
+          image.addPixel(i, j, radiance);
+        }
       }
     }
   }
