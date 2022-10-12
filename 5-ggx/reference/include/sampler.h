@@ -70,3 +70,50 @@ inline glm::vec3 sample_cosine_weighted_hemisphere(const glm::vec2& u)
   const float phi = 2.0f * M_PIf * u[1];
   return spherical_to_cartesian(phi, theta);
 }
+
+class DiscreteDistribution1D
+{
+ public:
+  DiscreteDistribution1D() {}
+  DiscreteDistribution1D(const float* values, int size)
+  {
+    m_cdf.resize(size + 1);
+
+    float sum = 0.0f;
+    for (int i = 0; i < size; ++i) { sum += values[i]; }
+
+    // compute cdf
+    m_cdf[0] = 0.0f;
+    for (int i = 1; i < size + 1; ++i) {
+      m_cdf[i] = m_cdf[i - 1] + values[i - 1] / sum;
+    }
+  }
+
+  int sample(float u, float& pmf) const
+  {
+    const int idx = binary_search(m_cdf.data(), m_cdf.size(), u);
+    pmf = m_cdf[idx + 1] - m_cdf[idx];
+    return idx;
+  }
+
+ private:
+  static int binary_search(const float* values, int size, float value)
+  {
+    int idx_min = 0;
+    int idx_max = size - 1;
+    while (idx_max >= idx_min) {
+      const int idx_mid = (idx_min + idx_max) / 2;
+      const float mid = values[idx_mid];
+      if (value < mid) {
+        idx_max = idx_mid - 1;
+      } else if (value > mid) {
+        idx_min = idx_mid + 1;
+      } else {
+        return idx_mid;
+      }
+    }
+    return idx_max;
+  }
+
+  std::vector<float> m_cdf;
+};
