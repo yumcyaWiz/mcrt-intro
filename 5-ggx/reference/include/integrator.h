@@ -58,14 +58,15 @@ class PathTracing : public Integrator
       orthonormal_basis(info.normal, tangent, bitangent);
 
       // setup BSDF
-      const auto bsdf = LambertOnly(info);
+      const auto bsdf = DiffuseSpecular(info);
 
       // sample direction from BSDF
       const glm::vec3 wo =
           world_to_local(-ray.direction, tangent, info.normal, bitangent);
       glm::vec3 f;
       float pdf;
-      const glm::vec3 wi = bsdf.sampleDirection(sampler.next_2d(), wo, f, pdf);
+      const glm::vec3 wi = bsdf.sampleDirection(sampler.next_2d(),
+                                                sampler.next_1d(), wo, f, pdf);
 
       // update throughput
       throughput *= f * abs_cos_theta(wi) / pdf;
