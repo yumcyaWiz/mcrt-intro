@@ -13,6 +13,29 @@ inline glm::vec3 reflect(const glm::vec3& v, const glm::vec3& n)
   return glm::normalize(-v + 2.0f * glm::dot(v, n) * n);
 }
 
+inline glm::vec2 roughness_to_alpha(float roughness, float anisotropy)
+{
+  // Revisiting Physically Based Shading at Imageworks p.24
+  glm::vec2 alpha;
+  alpha.x = roughness * roughness * (1.0f + anisotropy);
+  alpha.y = roughness * roughness * (1.0f - anisotropy);
+  return alpha;
+}
+
+// convert reflectivity, edge tint to complex IOR
+inline void artist_friendly_metallic_fresnel(const glm::vec3& reflectivity,
+                                             const glm::vec3& edge_tint,
+                                             glm::vec3& n, glm::vec3& k)
+{
+  // https://jcgt.org/published/0003/04/03/
+  const glm::vec3 r_sqrt = glm::sqrt(reflectivity);
+  n = edge_tint * (1.0f - reflectivity) / (1.0f + reflectivity) +
+      (1.0f - edge_tint) * (1.0f + r_sqrt) / (1.0f - r_sqrt);
+  const glm::vec3 t1 = n + 1.0f;
+  const glm::vec3 t2 = n - 1.0f;
+  k = glm::sqrt((reflectivity * (t1 * t1) - t2 * t2) / (1.0f - reflectivity));
+}
+
 class BxDF
 {
  public:
@@ -64,4 +87,43 @@ class IdealSpecularReflection : public BxDF
 
  private:
   glm::vec3 m_albedo;  // specular albedo
+};
+
+class FresnelDielectric
+{
+ public:
+  FresnelDielectric() {}
+  FresnelDielectric(float n) : m_n(n) {}
+
+ private:
+  float m_n;  // IOR(index of refraction)
+};
+
+class FresnelConductor
+{
+ public:
+  FresnelConductor() {}
+  FresnelConductor(const glm::vec3& n, const glm::vec3& k) : m_n(n), m_k(k) {}
+
+ private:
+  glm::vec3 m_n;  // real part of IOR
+  glm::vec3 m_k;  // imaginary part of IOR
+};
+
+// Dielectric Microfacet Reflection
+class MicrofacetReflectionDielectric : public BxDF
+{
+ public:
+  MicrofacetReflectionDielectric() {}
+
+ private:
+};
+
+// Conductor Microfacet Reflection
+class MicrofacetReflectionConductor : public BxDF
+{
+ public:
+  MicrofacetReflectionConductor() {}
+
+ private:
 };
