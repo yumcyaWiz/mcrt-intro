@@ -95,6 +95,19 @@ class FresnelDielectric
   FresnelDielectric() {}
   FresnelDielectric(float n) : m_n(n) {}
 
+  // evaluate fresnel reflectance
+  // cos: cosine between given direction and normal
+  float evaluate(float cos) const
+  {
+    const float temp = m_n * m_n + cos * cos - 1.0f;
+    if (temp < 0.0f) { return 1.0f; }
+
+    const float g = sqrtf(temp);
+    const float t0 = (g - cos) / (g + cos);
+    const float t1 = ((g + cos) * cos - 1.0f) / ((g - cos) * cos + 1.0f);
+    return 0.5f * t0 * t0 * (1.0f + t1 * t1);
+  }
+
  private:
   float m_n;  // IOR(index of refraction)
 };
