@@ -269,6 +269,34 @@ class MicrofacetReflectionConductor : public BxDF
 {
  public:
   MicrofacetReflectionConductor() {}
+  MicrofacetReflectionConductor(const glm::vec3& n, const glm::vec3& k,
+                                float roughness, float anisotropy)
+  {
+    m_alpha = roughness_to_alpha(roughness, anisotropy);
+  }
+
+  glm::vec3 sampleDirection(const glm::vec2& u, const glm::vec3& wo,
+                            glm::vec3& f, float& pdf) const override
+  {
+    // sample half-vector
+    const glm::vec3 wh = sample_ggx_vndf(u, wo, m_alpha);
+
+    // compute incident direction
+    const glm::vec3 wi = reflect(wo, wh);
+
+    // evaluate BRDF
+    const glm::vec3 fr = m_fresnel.evaluate(glm::abs(glm::dot(wo, wh)));
+    const float d = ggx_ndf(wh, m_alpha);
+    const float g2 = ggx_g2(wo, wi, m_alpha);
+    f = 0.25f * (fr * d * g2) / (abs_cos_theta(wo) * abs_cos_theta(wi));
+
+    // evaluate pdf
+    pdf = sample_ggx_vndf_pdf(wo, wh, m_alpha);
+
+    return wi;
+  }
 
  private:
+  FresnelConductor m_fresnel;
+  glm::vec2 m_alpha;
 };
