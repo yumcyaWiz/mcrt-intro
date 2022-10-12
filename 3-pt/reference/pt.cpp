@@ -18,7 +18,7 @@ int main()
 
   Image image(width, height);
   ThinLensCamera camera(glm::vec3(0, 1, 3), glm::vec3(0, 0, -1), 0.33f * M_PIf,
-                        32.0f, 5.0f);
+                        8.0f, 5.0f);
 
   Scene scene;
   scene.loadObj("CornellBox.obj");

@@ -69,10 +69,10 @@ class ThinLensCamera : public Camera
       : Camera(origin, forward)
   {
     m_focal_length = 1.0f / glm::tan(0.5f * fov);
-    m_lens_radius = 2.0f * m_focal_length / fnumber;
+    m_lens_radius = 0.5f * m_focal_length / fnumber;
 
     m_b = focus_distance;
-    m_a = 1.0f / (1.0f + m_focal_length - 1.0f / m_b);
+    m_a = 1.0f / (1.0f / m_focal_length - 1.0f / m_b);
 
     spdlog::info("[ThinLensCamera] focal length: {}", m_focal_length);
     spdlog::info("[ThinLensCamera] lens radius: {}", m_lens_radius);
