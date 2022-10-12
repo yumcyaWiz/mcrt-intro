@@ -104,11 +104,13 @@ inline glm::vec3 local_to_world(const glm::vec3& v, const glm::vec3& t,
                    v.x * t.z + v.y * n.z + v.z * b.z);
 }
 
+// return true if v has inf
 inline bool isinf(const glm::vec3& v)
 {
   return glm::isinf(v.x) || glm::isinf(v.y) || glm::isinf(v.z);
 }
 
+// return true if v has nan
 inline bool isnan(const glm::vec3& v)
 {
   return glm::isnan(v.x) || glm::isnan(v.y) || glm::isnan(v.z);

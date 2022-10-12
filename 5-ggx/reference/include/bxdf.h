@@ -22,20 +22,6 @@ inline glm::vec2 roughness_to_alpha(float roughness, float anisotropy)
   return alpha;
 }
 
-// convert reflectivity, edge tint to complex IOR
-inline void artist_friendly_metallic_fresnel(const glm::vec3& reflectivity,
-                                             const glm::vec3& edge_tint,
-                                             glm::vec3& n, glm::vec3& k)
-{
-  // https://jcgt.org/published/0003/04/03/
-  const glm::vec3 r_sqrt = glm::sqrt(reflectivity);
-  n = edge_tint * (1.0f - reflectivity) / (1.0f + reflectivity) +
-      (1.0f - edge_tint) * (1.0f + r_sqrt) / (1.0f - r_sqrt);
-  const glm::vec3 t1 = n + 1.0f;
-  const glm::vec3 t2 = n - 1.0f;
-  k = glm::sqrt((reflectivity * (t1 * t1) - t2 * t2) / (1.0f - reflectivity));
-}
-
 // -----
 // microfacet functions
 
