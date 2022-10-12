@@ -89,6 +89,7 @@ class IdealSpecularReflection : public BxDF
   glm::vec3 m_albedo;  // specular albedo
 };
 
+// dielectric fresnel reflectance
 class FresnelDielectric
 {
  public:
@@ -112,11 +113,27 @@ class FresnelDielectric
   float m_n;  // IOR(index of refraction)
 };
 
+// conductor fresnel reflectance
 class FresnelConductor
 {
  public:
   FresnelConductor() {}
   FresnelConductor(const glm::vec3& n, const glm::vec3& k) : m_n(n), m_k(k) {}
+
+  // evaluate fresnel reflectance
+  // cos: cosine between given direction and normal
+  glm::vec3 evaluate(float cos) const
+  {
+    const float c2 = cos * cos;
+    const glm::vec3 two_eta_cos = 2.0f * m_n * cos;
+
+    const glm::vec3 t0 = m_n * m_n + m_k * m_k;
+    const glm::vec3 t1 = t0 * c2;
+    const glm::vec3 Rs = (t0 - two_eta_cos + c2) / (t0 + two_eta_cos + c2);
+    const glm::vec3 Rp = (t1 - two_eta_cos + 1.0f) / (t1 + two_eta_cos + 1.0f);
+
+    return 0.5f * (Rp + Rs);
+  }
 
  private:
   glm::vec3 m_n;  // real part of IOR
