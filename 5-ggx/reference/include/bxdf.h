@@ -36,6 +36,92 @@ inline void artist_friendly_metallic_fresnel(const glm::vec3& reflectivity,
   k = glm::sqrt((reflectivity * (t1 * t1) - t2 * t2) / (1.0f - reflectivity));
 }
 
+// -----
+// microfacet functions
+
+// GGX NDF(Normal Distribution Function)
+// wh: half-vector
+inline float ggx_ndf(const glm::vec3& wh, const glm::vec2& alpha)
+{
+  const float t = wh.x * wh.x / (alpha.x * alpha.x) +
+                  wh.z * wh.z / (alpha.y * alpha.y) + wh.y * wh.y;
+  return 1.0f / (M_PIf * alpha.x * alpha.y * t * t);
+}
+
+// GGX shadowing-masking lambda
+// w: direction
+inline float ggx_lambda(const glm::vec3& w, const glm::vec2& alpha)
+{
+  const float t =
+      (alpha.x * alpha.x * w.x * w.x + alpha.y * alpha.y * w.z * w.z) /
+      (w.y * w.y);
+  return 0.5f * (-1.0f + glm::sqrt(1.0f + t));
+}
+
+// GGX shadowing-masking G1
+// w: direction
+inline float ggx_g1(const glm::vec3& w, const glm::vec2& alpha)
+{
+  return 1.0f / (1.0f + ggx_lambda(w, alpha));
+}
+
+// GGX shadowing-masking G2
+// wo: view direction
+// wi: incident direction
+inline float ggx_g2(const glm::vec3& wo, const glm::vec3& wi,
+                    const glm::vec2& alpha)
+{
+  return 1.0f / (1.0f + ggx_lambda(wo, alpha) + ggx_lambda(wi, alpha));
+}
+
+// GGX VNDF(Visible Normal Distribution Function)
+// w: direction
+// wh: half-vector
+inline float ggx_vndf(const glm::vec3& w, const glm::vec3& wh,
+                      const glm::vec2& alpha)
+{
+  return ggx_g1(w, alpha) * glm::abs(glm::dot(w, wh)) * ggx_ndf(wh, alpha) /
+         abs_cos_theta(w);
+}
+
+// sample direction from GGX VNDF
+// u: [0, 1] x [0, 1] random number
+// wo: view direction
+inline glm::vec3 sample_ggx_vndf(const glm::vec2& u, const glm::vec3& wo,
+                                 const glm::vec2& alpha)
+{
+  // https://jcgt.org/published/0007/04/01/
+  const glm::vec3 Vh =
+      glm::normalize(glm::vec3(alpha.x * wo.x, wo.y, alpha.y * wo.z));
+
+  const float lensq = Vh.x * Vh.x + Vh.z * Vh.z;
+  const glm::vec3 T1 = lensq > 0 ? glm::vec3(Vh.z, 0, -Vh.x) / glm::sqrt(lensq)
+                                 : glm::vec3(0, 0, 1);
+  const glm::vec3 T2 = glm::cross(Vh, T1);
+
+  const float r = glm::sqrt(u.x);
+  const float phi = 2.0f * M_PIf * u.y;
+  const float t1 = r * glm::cos(phi);
+  float t2 = r * glm::sin(phi);
+  const float s = 0.5f * (1.0f + Vh.y);
+  t2 = (1.0f - s) * glm::sqrt(glm::max(1.0f - t1 * t1, 0.0f)) + s * t2;
+  const glm::vec3 Nh = t1 * T1 + t2 * T2 +
+                       glm::sqrt(glm::max(1.0f - t1 * t1 - t2 * t2, 0.0f)) * Vh;
+  const glm::vec3 Ne = glm::normalize(
+      glm::vec3(alpha.x * Nh.x, glm::max(0.0f, Nh.y), alpha.y * Nh.z));
+
+  return Ne;
+}
+
+// VNDF sampling pdf
+inline float sample_ggx_vndf_pdf(const glm::vec3& wo, const glm::vec3& wh,
+                                 const glm::vec2& alpha)
+{
+  return 0.25f * ggx_vndf(wo, wh, alpha) / glm::abs(glm::dot(wo, wh));
+}
+
+// -----
+
 class BxDF
 {
  public:
@@ -145,8 +231,37 @@ class MicrofacetReflectionDielectric : public BxDF
 {
  public:
   MicrofacetReflectionDielectric() {}
+  MicrofacetReflectionDielectric(float ior, float roughness, float anisotropy)
+      : m_fresnel(ior)
+  {
+    m_alpha = roughness_to_alpha(roughness, anisotropy);
+  }
+
+  glm::vec3 sampleDirection(const glm::vec2& u, const glm::vec3& wo,
+                            glm::vec3& f, float& pdf) const override
+  {
+    // sample half-vector
+    const glm::vec3 wh = sample_ggx_vndf(u, wo, m_alpha);
+
+    // compute incident direction
+    const glm::vec3 wi = reflect(wo, wh);
+
+    // evaluate BRDF
+    const float fr = m_fresnel.evaluate(glm::abs(glm::dot(wo, wh)));
+    const float d = ggx_ndf(wh, m_alpha);
+    const float g2 = ggx_g2(wo, wi, m_alpha);
+    f = glm::vec3(0.25f * (fr * d * g2) /
+                  (abs_cos_theta(wo) * abs_cos_theta(wi)));
+
+    // evaluate pdf
+    pdf = sample_ggx_vndf_pdf(wo, wh, m_alpha);
+
+    return wi;
+  }
 
  private:
+  FresnelDielectric m_fresnel;
+  glm::vec2 m_alpha;
 };
 
 // Conductor Microfacet Reflection
