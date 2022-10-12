@@ -34,16 +34,19 @@ struct IntersectInfo {
 };
 
 struct Material {
-  glm::vec3 kd = glm::vec3(0.0f);   // diffuse color
-  const Texture* kd_tex = nullptr;  // diffuse texture
+  float diffuse = 1.0f;
+  glm::vec3 base_color = glm::vec3(0.0f);   // base color
+  const Texture* base_color_tex = nullptr;  // base color texture
 
-  glm::vec3 ks = glm::vec3(0.0f);   // specular color
-  const Texture* ks_tex = nullptr;  // specular texture
+  float specular = 0.0f;
+  glm::vec3 specular_color = glm::vec3(0.0f);   // specular color
+  const Texture* specular_color_tex = nullptr;  // specular color texture
 
-  glm::vec3 ke = glm::vec3(0.0f);   // emission color
-  const Texture* ke_tex = nullptr;  // emission texture
+  glm::vec3 emission_color = glm::vec3(0.0f);   // emission color
+  const Texture* emission_color_tex = nullptr;  // emission color texture
 
-  float roughness = 1.0f;  // specular roughness
+  float specular_roughness = 0.1f;  // specular roughness
+  float metalness = 0.0f;           // metalness
 
   Material() {}
 };

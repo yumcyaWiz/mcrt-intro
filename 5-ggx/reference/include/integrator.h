@@ -49,7 +49,7 @@ class PathTracing : public Integrator
       if (info.primitive->has_emission()) {
         // ray hits area light
         // add Le
-        radiance += throughput * info.primitive->material->ke;
+        radiance += throughput * info.primitive->material->emission_color;
         break;
       }
 
@@ -58,7 +58,7 @@ class PathTracing : public Integrator
       orthonormal_basis(info.normal, tangent, bitangent);
 
       // setup BSDF
-      const auto bsdf = DiffuseSpecular(info);
+      const auto bsdf = DiffuseSpecularMetal(info);
 
       // sample direction from BSDF
       const glm::vec3 wo =

@@ -159,26 +159,26 @@ struct Scene {
   {
     Material mat;
 
-    mat.kd = glm::vec3(m.diffuse[0], m.diffuse[1], m.diffuse[2]);
-    mat.ks = glm::vec3(m.specular[0], m.specular[1], m.specular[2]);
-    mat.ke = glm::vec3(m.emission[0], m.emission[1], m.emission[2]);
+    mat.base_color = glm::vec3(m.diffuse[0], m.diffuse[1], m.diffuse[2]);
+    mat.specular_color = glm::vec3(m.specular[0], m.specular[1], m.specular[2]);
+    mat.emission_color = glm::vec3(m.emission[0], m.emission[1], m.emission[2]);
 
     if (!m.diffuse_texname.empty()) {
       const int texture_id =
           m_unique_textures.at(parent_path / m.diffuse_texname);
-      mat.kd_tex = &m_textures[texture_id];
+      mat.base_color_tex = &m_textures[texture_id];
     }
 
     if (!m.specular_texname.empty()) {
       const int texture_id =
           m_unique_textures.at(parent_path / m.specular_texname);
-      mat.ks_tex = &m_textures[texture_id];
+      mat.specular_color_tex = &m_textures[texture_id];
     }
 
     if (!m.emissive_texname.empty()) {
       const int texture_id =
           m_unique_textures.at(parent_path / m.emissive_texname);
-      mat.ke_tex = &m_textures[texture_id];
+      mat.emission_color_tex = &m_textures[texture_id];
     }
 
     return mat;

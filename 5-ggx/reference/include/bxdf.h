@@ -271,6 +271,7 @@ class MicrofacetReflectionConductor : public BxDF
   MicrofacetReflectionConductor() {}
   MicrofacetReflectionConductor(const glm::vec3& n, const glm::vec3& k,
                                 float roughness, float anisotropy)
+      : m_fresnel(n, k)
   {
     m_alpha = roughness_to_alpha(roughness, anisotropy);
   }
