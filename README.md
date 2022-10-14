@@ -50,3 +50,7 @@ Each directory has reference implementation under `reference/`.
 ### 4-bvh
 
 ![](img/4-bvh.png)
+
+### 5-ggx
+
+![](img/5-ggx.png)
