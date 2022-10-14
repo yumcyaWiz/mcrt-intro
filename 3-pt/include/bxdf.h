@@ -45,23 +45,3 @@ class Lambert : public BxDF
  private:
   glm::vec3 m_albedo;  // diffuse albedo
 };
-
-// Mirror BRDF
-class IdealSpecularReflection : public BxDF
-{
- public:
-  IdealSpecularReflection() {}
-  IdealSpecularReflection(const glm::vec3& albedo) : m_albedo(albedo) {}
-
-  glm::vec3 sampleDirection(const glm::vec2& u, const glm::vec3& wo,
-                            glm::vec3& f, float& pdf) const override
-  {
-    const glm::vec3 wi = reflect(wo, glm::vec3(0, 1, 0));
-    f = m_albedo / abs_cos_theta(wi);
-    pdf = 1.0f;
-    return wi;
-  }
-
- private:
-  glm::vec3 m_albedo;  // specular albedo
-};
