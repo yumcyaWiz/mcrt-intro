@@ -154,6 +154,7 @@ class FresnelDielectric
   // cos: cosine between given direction and normal
   float evaluate(float cos) const
   {
+    // https://seblagarde.wordpress.com/2013/04/29/memo-on-fresnel-equations/
     const float temp = m_n * m_n + cos * cos - 1.0f;
     if (temp < 0.0f) { return 1.0f; }
 
@@ -178,6 +179,7 @@ class FresnelConductor
   // cos: cosine between given direction and normal
   glm::vec3 evaluate(float cos) const
   {
+    // https://seblagarde.wordpress.com/2013/04/29/memo-on-fresnel-equations/
     const float c2 = cos * cos;
     const glm::vec3 two_eta_cos = 2.0f * m_n * cos;
 
