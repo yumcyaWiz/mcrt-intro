@@ -26,7 +26,7 @@ int main()
                            scene.m_primitives.size());
   intersector.buildBVH();
 
-  UniformSky sky(glm::vec3(1.0f));
+  IBL sky("PaperMill_E_3k.hdr");
 
   Sampler sampler(12);
 
